@@ -31,7 +31,7 @@ The function implements a Hierarchical clustering
  Extends the \code{hclust} function of the \pkg{stat} package.
 }
 \examples{
-results=WH_hclust(x = BLOOD,simplify = TRUE, method="ward.D2")
+results=WH_hclust(x = BLOOD,simplify = TRUE, method="complete")
 }
 \references{
 Irpino A., Verde R. (2006). A new Wasserstein based distance for the hierarchical clustering

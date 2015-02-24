@@ -1,9 +1,9 @@
-8b8b8acc83f73f5a9383d8f87d754877 *DESCRIPTION
+9be5ecd7979b7480b64387af31c8be73 *DESCRIPTION
 c059e29eb8630541b03d495e04ef3c2c *NAMESPACE
 f440c4990809a976e76164f1234b62b3 *R/All_classes.R
 4649271a2e3bb62e04a38ea86d834579 *R/Fuzzy_cmeans.R
 ddc7151d8abff78256cb5e4354630167 *R/H_time_series.R
-e680296aa0a180472c98778c4bf20797 *R/HistDAWass-package.R
+6d8b89101ffdd4cff16bee1ccee228b7 *R/HistDAWass-package.R
 ed875ffeb01850e233a052b231caf648 *R/Kohonen_maps.R
 5946d18364c6b4cd42394f2c888146ba *R/Met_HTS.R
 a95ae9387fab4d5eb727eb80d04fb494 *R/Met_MatH.R
@@ -11,7 +11,7 @@ ccb453e4562a18066e57b5e4b08956cd *R/Met_distributionH.R
 0896fe2907e198879cb26cdd3cbf67c0 *R/Utility.R
 ad1fd5f864f01ad919816e6f80d0313b *R/principal_components.R
 9767acbb212d43769467627f4f68f2a9 *R/regression.R
-398298b4a8c6cb9af1bd0a062cbdcecb *R/unsuperv_classification.R
+a2c9d7ba2547586626f64abadb89a31c *R/unsuperv_classification.R
 1e220be94f46c0a111a9734b91ba3d60 *data/HData.RData
 6ff0bc67ac4a5fbc224b7b07bc2ef49e *data/datalist
 d4ae55612806e2db28d95f71937f9c4d *man/Age_Pyramids_2014.Rd
@@ -24,7 +24,7 @@ ae38d31cf8c362147ff153c297d38a6f *man/China_Month.Rd
 effb5d8364a5ab8089c8e6a6a6414d46 *man/HTS.exponential.smoothing.Rd
 5ddeda771792b26589a8221d7e33a450 *man/HTS.moving.averages.Rd
 b9ada5659adb71d3674bcb7f011717ff *man/HTS.predict.knn.Rd
-448c4f3c4ae5eb7a6b7491917051a257 *man/HistDAWass-package.Rd
+0133c2f36c8dd2a643c1d9eabc7a23fb *man/HistDAWass-package.Rd
 127b89b4cdd5d075e79ceacaaf79f795 *man/MatH-class.Rd
 9de4d7679376b97db10290968a8ceed5 *man/OzoneFull.Rd
 fde3ef7396f11b77b10c281b1cdb7345 *man/OzoneH.Rd
@@ -53,7 +53,7 @@ a04479a88ea5a21d1f3fecef9187a381 *man/WH_2d_Kohonen_maps.Rd
 9d490da720e7f95574dc3f3513083ff1 *man/WH_adaptive.kmeans.Rd
 bd36358009afd3b46eaf0fc84b5fca68 *man/WH_adaptive_fcmeans.Rd
 37582455d43852f45bb0bfaf505925cf *man/WH_fcmeans.Rd
-b0977fe28c7fc536a7f379b31cf09564 *man/WH_hclust.Rd
+ffab50360390a1edf9e1a7ae9d1ce5a0 *man/WH_hclust.Rd
 9c409b2df18367049ec89e2c7e9af608 *man/WH_kmeans.Rd
 f19b38bbfabc90c63c6c3163942130b3 *man/WassSqDistH-methods.Rd
 8827dd7cff7c46486a8846233e287551 *man/checkEmptyBins-methods.Rd

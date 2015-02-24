@@ -162,7 +162,7 @@ WH_kmeans =function (x,k, rep=5,
 #' of histogram symbolic data. In: Batanjeli et al. Data Science and Classification, IFCS 2006. p. 185-192,
 #'  BERLIN:Springer, ISBN: 3-540-34415-2
 #' @examples
-#' results=WH_hclust(x = BLOOD,simplify = TRUE, method="ward.D2")
+#' results=WH_hclust(x = BLOOD,simplify = TRUE, method="complete")
 #' @export
 WH_hclust =function (x, 
                      simplify=FALSE,
