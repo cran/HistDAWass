@@ -1,8 +1,8 @@
 Package: HistDAWass
 Type: Package
 Title: Histogram-Valued Data Analysis
-Version: 0.1.1
-Date: 2015-02-17
+Version: 0.1.2
+Date: 2015-03-04
 Authors@R: c(person("Antonio", "Irpino", role = c("aut", "cre"),
   	     email = "antonio.irpino@unina2.it"))
 Author: Antonio Irpino [aut, cre]
@@ -15,15 +15,15 @@ Description: In the framework of Symbolic Data Analysis, a relatively new approa
           between quantile functions. The package contains unsupervised classification techniques, 
           least square regression and tools for histogram-valued data and for histogram time series.
 License: GPL (>= 2)
-Imports: methods, FactoMineR, class
-Depends: R (>= 3.1.0), graphics
+Imports: graphics, FactoMineR, class, ggplot2, grid, histogram
+Depends: R(>= 3.1), methods
 LazyData: true
 Collate: 'All_classes.R' 'Fuzzy_cmeans.R' 'H_time_series.R'
         'HistDAWass-package.R' 'Kohonen_maps.R' 'Met_HTS.R'
         'Met_MatH.R' 'Met_distributionH.R' 'Utility.R'
         'principal_components.R' 'regression.R'
-        'unsuperv_classification.R'
+        'unsuperv_classification.R' 'Plotting_with_ggplot.R'
 NeedsCompilation: no
-Packaged: 2015-02-24 13:48:06 UTC; Antonio
+Packaged: 2015-03-17 18:28:15 UTC; Antonio
 Repository: CRAN
-Date/Publication: 2015-02-24 15:29:56
+Date/Publication: 2015-03-17 20:44:20
