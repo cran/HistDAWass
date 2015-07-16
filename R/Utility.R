@@ -327,6 +327,7 @@ ComputeFast_Fuzzy_Adaptive_TOT_SSQ=function(MM,proto,memb,m,lambdas){
 #' @param epsilon a number between 0 and 1 to provide if \code{algo="PolyLine"} is chosen. Default=0.01.
 #' @return A \code{distributionH} object, i.e. a distribution.
 #' @importFrom histogram histogram
+#' @importFrom stats quantile sd
 #' @export
 #' @examples
 #' data=rnorm(n = 1000,mean = 2,sd = 3)

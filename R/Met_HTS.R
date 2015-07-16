@@ -67,11 +67,11 @@ setMethod("plot",
 #'  It allows a plot organized by rows, each row of the plot contains a max number of time stamps
 #'   indicated by maxno.perplot.  
 #' @examples
-#'  plot(RetHTS) #plots RetHTS dataset
+#'  plot(subsetHTS(RetHTS,from=1,to=40)) #plots RetHTS dataset
 #' \dontrun{
-#'  plot(RetHTS, type="BOXPLOT",  border="blue", maxno.perplot=40) 
-#'  plot(RetHTS, type="VIOLIN",  border="blue", maxno.perplot=40)
+#'  plot(RetHTS, type="BOXPLOT",  border="blue", maxno.perplot=20) 
 #'  plot(RetHTS, type="VIOLIN",  border="blue", maxno.perplot=20)
+#'  plot(RetHTS, type="VIOLIN",  border="blue", maxno.perplot=10)
 #'  }
 #'  @export
  setMethod("plot",

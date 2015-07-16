@@ -31,7 +31,9 @@
 #' @examples
 #' results=WH.1d.PCA(data = BLOOD,var = 1, listaxes=c(1:2))
 #' @importFrom FactoMineR PCA
-#' @importFrom graphics plot
+#' @importFrom graphics plot abline axis hist plot.new plot.window polygon segments text title
+#' @importFrom grDevices dev.new rgb
+#' @importFrom stats density quantile
 #' @export
 WH.1d.PCA=function(data,var, quantiles=10, plots=TRUE, listaxes=c(1:4),axisequal=FALSE,qcut=1){
   if (is(data)[1]!="MatH"){stop("Input data must be a MatH object (A matrix of histograms)")}

@@ -14,7 +14,7 @@
 #' @slot solution$membership A matrix. The membership degree of each unit to each cluster.
 #' @slot solution$IDX A vector. The crisp assignement to a cluster.
 #' @slot solution$cardinality A vector. The cardinality of each final cluster (after the crisp assignement).
-#' @slot solution$Crit A number. The criterion (Sum od square deviation 
+#' @slot solution$Crit A number. The criterion (Sum of square deviation 
 #' from the prototypes) value at the end of the run.
 #' @slot quality A number. The percentage of Sum of square deviation explained by the model. 
 #' (The higher the better)

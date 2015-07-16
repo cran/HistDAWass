@@ -884,6 +884,7 @@ setMethod("show",
 #'  plot(mydist, type="VBOXPLOT") #plots a vertical boxplot for mydist
 #'  plot(mydist, type="CDF") #plots the cumulative distribution function of mydist
 #'  plot(mydist, type="QF") #plots the quantile function of mydist
+#' @importFrom utils write.table
 #' @export
 setMethod("plot",
           signature(x = "distributionH" ),

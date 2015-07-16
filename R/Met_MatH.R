@@ -49,6 +49,7 @@ MatH=function(x=list(new('distributionH')), nrows=1, ncols=1,rownames=NULL,varna
  #' @examples
  #' D=BLOOD #the BLOOD dataset
  #' SUB_D=BLOOD[c(1,2,5),c(1,2)]
+ #' @importFrom stats variable.names
  #' @export
 setMethod("[",
           signature(x = "MatH"),
@@ -1219,9 +1220,12 @@ setMethod("show",
 #'  @param border (optional) a string the color of the border of the plot, default="black".
 #' @examples
 #'  plot(BLOOD) #plots BLOOD dataset
+#'   \dontrun{
 #'  plot(BLOOD, type="HISTO",  border="blue") #plots a matrix of histograms
 #'  plot(BLOOD, type="DENS",  border="blue") #plots a matrix of densities
 #'  plot(BLOOD, type="BOXPLOT") #plots a  boxplots
+#'  }
+#'  @importFrom utils write.table
 #'  @export
 
 setMethod("plot",

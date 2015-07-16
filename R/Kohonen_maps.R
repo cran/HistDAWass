@@ -53,6 +53,7 @@
 #'    grid. 
 #' 
 #' @importFrom class somgrid
+#' @importFrom stats lm dist runif
 #' @examples
 #' \dontrun{
 #' results=WH_2d_Adaptive_Kohonen_maps(x = BLOOD,k = 2,

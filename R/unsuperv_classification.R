@@ -168,6 +168,7 @@ WH_kmeans =function (x,k, rep=5,
 #' results=WH_hclust(x = BLOOD,simplify = TRUE, method="complete")
 #' plot(results) # it plots the dendrogram
 #' cutree(results,k = 5) # it returns the labels for 5 clusters
+#' @importFrom stats hclust quantile as.dist
 #' @export
 WH_hclust =function (x, 
                      simplify=FALSE,
@@ -238,6 +239,7 @@ WH_hclust =function (x,
 #' ISSN: 0957-4174, doi: http://dx.doi.org/10.1016/j.eswa.2013.12.001
 #' @examples
 #' results=WH_adaptive.kmeans(x = BLOOD,k = 2, rep = 10,simplify = TRUE,qua = 10,standardize = TRUE)
+#' @importFrom stats runif
 #' @export
 WH_adaptive.kmeans =function (x,k,
                               schema=1, #1=VariableGLOBAL 2=componentGLOBAL 3=Variable x Cluster 4=Components x cluster 
