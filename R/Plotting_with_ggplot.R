@@ -283,7 +283,7 @@ plot.HTS.1v=function (x, type="BOXPLOT", border="black", maxno.perplot=15){
       }
       p <- with(df, ggplot(df, aes(factor(t), x,fill=grad)) + geom_violin() +
         geom_point(data = df2,aes(factor(t),x))+
-        geom_line(data = df2,aes(x=factor(t),y=x,group=factor(0)),size=0.5,aplha=0.7,linetype="dashed")+
+        geom_line(data = df2,aes(x=factor(t),y=x,group=factor(0)),size=0.5,alpha=0.7,linetype="dashed")+
         scale_fill_gradient2(limits=c(0,1),low = 'red', mid = 'white', high = 'green', midpoint = 0.5) +
         theme(plot.margin = unit(c(0.1, 0.1, 0.1, 0.1), "cm"),
               legend.position="none",
@@ -303,6 +303,7 @@ plot.HTS.1v=function (x, type="BOXPLOT", border="black", maxno.perplot=15){
 
 multiplot <- function( plotlist=NULL,..., file, cols=1, layout=NULL) {
   #require(grid)
+  #require(ggplot2)
   
   # Make a list from the ... arguments and plotlist
   plots <- c(list(...), plotlist)
@@ -359,7 +360,7 @@ multiplot <- function( plotlist=NULL,..., file, cols=1, layout=NULL) {
 #' plotPredVsObs(PRED,OBS,"DENS")
 #' @export
 plotPredVsObs<-function(PRED,OBS,type="HISTO", ncolu=2){
- # require ("Vioplot")
+  #require ("vioplot")
   nobj=get.MatH.nrows(PRED)
   maxpercol=ceiling(nobj/ncolu)
   ListofP=list()
@@ -454,7 +455,7 @@ plotPredVsObs<-function(PRED,OBS,type="HISTO", ncolu=2){
                                     legend.title=element_blank()))
     }
     if (type=="DENS"){
-      p=with(M,ggplot(subset(M, colu==CC), aes(x = x, fill=Type)) + geom_density(alpha=0.6, colour=gray)+
+      p=with(M,ggplot(subset(M, colu==CC), aes(x = x, fill=Type)) + geom_density(alpha=0.6, colour="gray")+
                facet_grid(NameO ~ .)+theme(legend.position="bottom",
                                            axis.title.x = element_blank(),
                                            axis.title.y = element_blank(),

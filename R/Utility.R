@@ -145,11 +145,6 @@ WH.ADPT.KMEANS.TOTALSSQ=function(x,memb,m,lambdas,proto){
         tmpD_centered=as.numeric(tmpD[1]-tmpD[2])
         TSQ_clu[1,variables,cluster]=TSQ_clu[1,variables,cluster]+((memb[indiv,cluster])^m)*lambdas[(variables*2-1),cluster]*tmpD_mean
         TSQ_clu[2,variables,cluster]=TSQ_clu[2,variables,cluster]+((memb[indiv,cluster])^m)*lambdas[(variables*2),cluster]*tmpD_centered
-        #         TSQ[1,variables]=TSQ[1,variables]+((memb[indiv,cluster])^m)*lambdas[(variables*2-1),cluster]*tmpD_mean
-        #         TSQ[2,variables]=TSQ[2,variables]+((memb[indiv,cluster])^m)*lambdas[(variables*2),cluster]*tmpD_centered
-        #         TSQ_clu[1,variables,cluster]=TSQ_clu[1,variables,cluster]+((memb[indiv,cluster])^m)*tmpD_mean
-        #         TSQ_clu[2,variables,cluster]=TSQ_clu[2,variables,cluster]+((memb[indiv,cluster])^m)*tmpD_centered
-        
       }
     }
   }
@@ -162,9 +157,6 @@ WH.ADPT.KMEANS.TOTALSSQ=function(x,memb,m,lambdas,proto){
         tmpD_centered=as.numeric(tmpD[1]-tmpD[2])
         TSQ_clu2[1,variables,cluster]=TSQ_clu2[1,variables,cluster]+((memb[indiv,cluster])^m)*lambdas[(variables*2-1),cluster]*tmpD_mean
         TSQ_clu2[2,variables,cluster]=TSQ_clu2[2,variables,cluster]+((memb[indiv,cluster])^m)*lambdas[(variables*2),cluster]*tmpD_centered
-        #         TSQ[1,variables]=TSQ[1,variables]+((memb[indiv,cluster])^m)*lambdas[(variables*2-1),cluster]*tmpD_mean
-        #         TSQ[2,variables]=TSQ[2,variables]+((memb[indiv,cluster])^m)*lambdas[(variables*2),cluster]*tmpD_centered
-        
       }
     }
   }
@@ -261,27 +253,6 @@ ComputeFast_Fuzzy_Adaptive_TOT_SSQ=function(MM,proto,memb,m,lambdas){
     tmp=new('distributionH',x=Cen,p=MM[[variable]][,(ind+1)])
     GP@M[1,variable][[1]]=tmp
   }
-  #compute G by protos
-#   GP2=new('MatH',1,var)
-#   for (v in 1:var){
-#     LMc=memb^m*matrix(lambdas[(v*2-1),],ind,k, byrow=TRUE)
-#     LMc=LMc/sum(LMc)
-#     LWc=apply(LMc,2,sum)
-#     LMv=memb^m*matrix(lambdas[(v*2),],ind,k, byrow=TRUE)
-#     LMv=LMv/sum(LMv)
-#     LWv=apply(LMv,2,sum)
-#     CG=proto@M[1,v][[1]]@m*LWc[1]
-#     CEN=(proto@M[1,v][[1]]-proto@M[1,v][[1]]@m)*LWv[1]
-#     for (clu in 2:k){
-#       CG=CG+proto@M[clu,v][[1]]@m*LWc[clu]
-#       CEN=CEN+(proto@M[clu,v][[1]]-proto@M[clu,v][[1]]@m)*LWv[clu]
-#     }
-#     GP2@M[1,v][[1]]=CEN+CG
-# 
-#   
-#   }
-  
-  
   #compute TOTALSSQ
   SSQ_det=array(0,dim = c(2,var,clu), dimnames=list(c('Mean','Variability'),colnames(proto@M),rownames(proto@M)))
   for (variable in 1:var){
@@ -403,6 +374,8 @@ data2hist<-function(data,
     x=as.vector(resu[,1])*stdev
     p=as.vector(resu[,2])
   }
+  p[1]=0
+  p[length(p)]=1
   mydist<- distributionH(x,p)
   return(mydist)
 }

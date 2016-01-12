@@ -624,11 +624,11 @@ setMethod(f="WH.SSQ",signature=c(object="MatH"),
             for (v1 in 1:ncols){
               for (v2 in v1:ncols){
                 for (indiv in 1:nrows){
-                  if (v1==v2){
-                    DEV_MAT[v1,v2]=DEV_MAT[v1,v2]+w[indiv,1]*((object@M[indiv,v1][[1]]@s)^2+(object@M[indiv,v1][[1]]@m)^2)
-                  }else{
+                   if (v1==v2){
+                     DEV_MAT[v1,v2]=DEV_MAT[v1,v2]+w[indiv,1]*((object@M[indiv,v1][[1]]@s)^2+(object@M[indiv,v1][[1]]@m)^2)
+                   }else{
                     DEV_MAT[v1,v2]=DEV_MAT[v1,v2]+w[indiv,1]*dotpW(object@M[indiv,v1][[1]],object@M[indiv,v2][[1]])
-                  }
+                   }
                 }
                 if (v2>v1){
                   DEV_MAT[v1,v2]=DEV_MAT[v1,v2]-sum(w)*dotpW(MEANS@M[1,v1][[1]],MEANS@M[1,v2][[1]])
@@ -740,8 +740,8 @@ setMethod(f="WH.correlation",signature=c(object="MatH"),
 #'  It returns a rectangular a matrix of numbers, consistent with 
 #' a set of distributions equipped with a L2 wasserstein metric.
 #' @param object1  a \code{MatH} object
-#'  @param object2  a \code{MatH} object
-#'  @param ... some optional parameters 
+#' @param object2  a \code{MatH} object
+#' @param ... some optional parameters 
 #' @param w it is possible to add a vector of weights (positive numbers) 
 #' having the same size of the rows of the \code{MatH object}, 
 #' default = equal weight for each row
@@ -810,7 +810,7 @@ setMethod(f="WH.SSQ2",signature=c(object1="MatH",object2="MatH"),
 #'  It returns a rectangular a matrix of numbers, consistent with 
 #' a set of distributions equipped with a L2 wasserstein metric.
 #' @param object1  a \code{MatH} object
-#'  @param object2  a \code{MatH} object
+#' @param object2  a \code{MatH} object
 #' @param ... some optional parameters 
 #' @param w it is possible to add a vector of weights (positive numbers) 
 #' having the same size of the rows of the \code{MatH object}, 
@@ -880,7 +880,7 @@ setMethod(f="WH.var.covar2",signature=c(object1="MatH",object2="MatH"),
 #'  It returns a rectangular a matrix of numbers, consistent with 
 #' a set of distributions equipped with a L2 wasserstein metric.
 #' @param object1  a \code{MatH} object
-#'  @param object2  a \code{MatH} object
+#' @param object2  a \code{MatH} object
 #' @param ... some optional parameters 
 #' @param w it is possible to add a vector of weights (positive numbers) 
 #' having the same size of the rows of the \code{MatH object}, 
@@ -1210,23 +1210,22 @@ setMethod("show",
 #' @aliases plot,MatH-method
 #' @description An overloading plot function for a \code{MatH} object. The method returns a graphical representation 
 #' of the matrix of histograms. 
-
 #' @param x a \code{distributionH} object
 #' @param y not used in this implementation
 #' @param type (optional) a string describing the type of plot, default="HISTO".\cr
 #'  Other allowed types are \cr
 #'  "DENS"=a density approximation, \cr
 #'  "BOXPLOT"=l boxplot
-#'  @param border (optional) a string the color of the border of the plot, default="black".
+#' @param border (optional) a string the color of the border of the plot, default="black".
 #' @examples
-#'  plot(BLOOD) #plots BLOOD dataset
-#'   \dontrun{
-#'  plot(BLOOD, type="HISTO",  border="blue") #plots a matrix of histograms
-#'  plot(BLOOD, type="DENS",  border="blue") #plots a matrix of densities
-#'  plot(BLOOD, type="BOXPLOT") #plots a  boxplots
-#'  }
-#'  @importFrom utils write.table
-#'  @export
+#' plot(BLOOD) #plots BLOOD dataset
+#' \dontrun{
+#' plot(BLOOD, type="HISTO",  border="blue") #plots a matrix of histograms
+#' plot(BLOOD, type="DENS",  border="blue") #plots a matrix of densities
+#' plot(BLOOD, type="BOXPLOT") #plots a  boxplots
+#' }
+#' @importFrom utils write.table
+#' @export
 
 setMethod("plot",
           signature(x = "MatH"),

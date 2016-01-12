@@ -1,19 +1,20 @@
 Package: HistDAWass
 Type: Package
 Title: Histogram-Valued Data Analysis
-Version: 0.1.3
-Date: 2015-07-13
+Version: 0.1.4
+Date: 2016-01-11
 Authors@R: c(person("Antonio", "Irpino", role = c("aut", "cre"),
   	     email = "antonio.irpino@unina2.it"))
 Author: Antonio Irpino [aut, cre]
 Maintainer: Antonio Irpino <antonio.irpino@unina2.it>
-Description: In the framework of Symbolic Data Analysis, a relatively new approach 
-          to the statistical analysis of multi-valued data, we consider histogram-valued data, i.e.,
-          data described by univariate histograms. The  methods and the basic statistics for 
-          histogram-valued data are mainly based 
-          on the L2 Wasserstein metric between distributions, i.e., a Euclidean metric 
-          between quantile functions. The package contains unsupervised classification techniques, 
-          least square regression and tools for histogram-valued data and for histogram time series.
+Description: In the framework of Symbolic Data Analysis, a relatively new
+    approach to the statistical analysis of multi-valued data, we consider
+    histogram-valued data, i.e., data described by univariate histograms. The
+    methods and the basic statistics for histogram-valued data are mainly based
+    on the L2 Wasserstein metric between distributions, i.e., a Euclidean metric
+    between quantile functions. The package contains unsupervised classification
+    techniques, least square regression and tools for histogram-valued data and for
+    histogram time series.
 License: GPL (>= 2)
 Imports: graphics, class, FactoMineR, ggplot2, grid, histogram,
         grDevices, stats, utils
@@ -24,7 +25,8 @@ Collate: 'All_classes.R' 'Fuzzy_cmeans.R' 'H_time_series.R'
         'Met_MatH.R' 'Met_distributionH.R' 'Utility.R'
         'principal_components.R' 'regression.R'
         'unsuperv_classification.R' 'Plotting_with_ggplot.R'
+RoxygenNote: 5.0.1
 NeedsCompilation: no
-Packaged: 2015-07-16 09:57:08 UTC; Antonio
+Packaged: 2016-01-12 15:58:49 UTC; Antonio
 Repository: CRAN
-Date/Publication: 2015-07-16 14:24:17
+Date/Publication: 2016-01-12 22:21:47
