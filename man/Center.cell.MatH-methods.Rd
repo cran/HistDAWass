@@ -26,4 +26,3 @@ such that each distribution is shifted and has a mean equal to zero
 CEN_BLOOD=Center.cell.MatH(BLOOD)
 get.MatH.stats(BLOOD, stat="mean")
 }
-

@@ -5,9 +5,10 @@
 \title{Batch Kohonen self-organizing 2d maps using adaptive distances for  histogram-valued data}
 \usage{
 WH_2d_Adaptive_Kohonen_maps(x, net = list(xdim = 4, ydim = 3, topo =
-  c("rectangular")), kern.param = 2, TMAX = 2, Tmin = 0.2, niter = 30,
-  rep, simplify = FALSE, qua = 10, standardize = FALSE, schema = 4,
-  init.weights = "EQUAL", weight.sys = "PROD", theta = 2, Wfix = FALSE)
+  c("rectangular")), kern.param = 2, TMAX = -9999, Tmin = -9999,
+  niter = 30, repetitions, simplify = FALSE, qua = 10,
+  standardize = FALSE, schema = 4, init.weights = "EQUAL",
+  weight.sys = "PROD", theta = 2, Wfix = FALSE)
 }
 \arguments{
 \item{x}{A MatH object (a matrix of distributionH).}
@@ -24,7 +25,7 @@ default \code{net=list(xdim=4,ydim=3,topo=c('rectangular'))}}
 
 \item{niter}{maximum number of iterations (default=30)}
 
-\item{rep}{number of repetion of the algorithm (default=5), beacuase each launch may generate a local optimum}
+\item{repetitions}{number of repetion of the algorithm (default=5), beacuase each launch may generate a local optimum}
 
 \item{simplify}{a logical parameter for speeding up computations (default=FALSE). If true data are recoded in order to have fast computations}
 
@@ -69,7 +70,7 @@ An extension of Batch Self Organised Map (BSOM) is here proposed for  histogram 
 \section{Slots}{
 
 \describe{
-\item{\code{solution}}{A list.Returns the best solution among the \code{rep}etitions, i.e. 
+\item{\code{solution}}{A list.Returns the best solution among the \code{repetitions}etitions, i.e. 
 the one having the minimum sum of squares criterion.}
 
 \item{\code{solution$MAP}}{The map topology.}
@@ -90,11 +91,12 @@ from the centers) value at the end of the run.}
 \item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model. 
 (The higher the better)}
 }}
+
 \examples{
 \dontrun{
 results=WH_2d_Adaptive_Kohonen_maps(x = BLOOD,k = 2,
                                    net=list(xdim=2,ydim=3,topo=c('rectangular')), 
-                                   rep = 2,simplify = TRUE,
+                                   repetitions = 2,simplify = TRUE,
                                    qua = 10,standardize = TRUE)
                                    }
 }
@@ -102,4 +104,3 @@ results=WH_2d_Adaptive_Kohonen_maps(x = BLOOD,k = 2,
 Irpino A, Verde R, De Carvalho FAT (2012). Batch self organizing maps for interval and histogram data.
 In: Proceedings of COMPSTAT 2012. p. 143-154, ISI/IASC, ISBN: 978-90-73592-32-2
 }
-

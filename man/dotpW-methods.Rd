@@ -4,9 +4,11 @@
 \name{dotpW}
 \alias{dotpW}
 \alias{dotpW,distributionH,distributionH-method}
-\alias{dotpW,distributionH,numeric-method}
 \alias{dotpW,distributionH-method}
 \alias{dotpW,numeric,distributionH-method}
+\alias{dotpW,distributionH-method}
+\alias{dotpW,distributionH,numeric-method}
+\alias{dotpW,distributionH-method}
 \title{Method \code{dotpW}}
 \usage{
 dotpW(e1, e2)
@@ -49,13 +51,12 @@ dotpW(3,mydist1)  #---> 13.2
 
 
 }
-\author{
-Antonio Irpino
-}
 \references{
 Irpino, A., Verde, R. (2015) \emph{Basic
 statistics for distributional symbolic variables: a new metric-based
 approach} Advances in Data Analysis and Classification, DOI 10.1007/s11634-014-0176-4
 }
+\author{
+Antonio Irpino
+}
 \keyword{distribution}
-

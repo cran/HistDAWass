@@ -264,7 +264,7 @@ WH_adaptive.kmeans =function (x,k,
   }
   ind=nrow(x@M)
   vars=ncol(x@M)
-  
+  if (weight.sys=='PROD'){theta=1}
   ## we homogeneize data for speeding up the code if required
   tmp=Prepare(x,simplify,qua,standardize)
   MM=tmp$MM
@@ -530,7 +530,10 @@ WH_adaptive.kmeans =function (x,k,
       if (empty){repet=repet-1}
       memb=matrix(0,ind,k)
       for(indiv in 1:ind){memb[indiv,IDX[indiv]]=1}
-      TMP_SSQ=WH.ADPT.FCMEANS.SSQ(x,memb,1,lambdas,proto)
+      #browser()
+      
+      TMP_SSQ=WH.ADPT.FCMEANS.SSQ_FAST(MM,x,memb,1,lambdas,proto,theta=theta)
+      #TMP_SSQ=WH.ADPT.FCMEANS.SSQ(x,memb,1,lambdas,proto,theta)
       GenCrit=TMP_SSQ
       if(is.na(GenCrit)){
         cat('isNAN')

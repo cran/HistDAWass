@@ -35,4 +35,3 @@ WH.SSQ(BLOOD)
 RN<-runif(get.MatH.nrows(BLOOD))
 WH.SSQ(BLOOD,w=RN)
 }
-

@@ -26,7 +26,7 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
     df=data.frame(x=xs,cdf=ps)
     
     p=with(df,ggplot(df, aes(x=x, y=cdf))+geom_line(colour=border) +
-      xlab(xlabel) + ylab("density") +
+      xlab("x") + ylab("p") +
       ggtitle("Cumulative Distribution Function")
     )
   }
@@ -36,7 +36,7 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
     df=data.frame(x=xs,cdf=ps)
     
     p=with(df,ggplot(df, aes(x=cdf, y=x))+geom_line(colour=border) +
-      xlab(xlabel) + ylab("x") +
+      xlab("p") + ylab("x") +
       ggtitle("Quantile Function")
     )
     
@@ -52,7 +52,7 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
     
     df=data.frame(x=xn)
     p=with(df,ggplot(df, aes(x=x))+geom_density(alpha=0.7, fill=col, colour=border) +
-            xlab(xlabel) + ylab("x") +
+            xlab(xlabel) + ylab("density") +
       ggtitle("Density plot (KDE)"))
     p=p+geom_vline(xintercept=x@m,  colour="black", linetype="dashed", size=0.5)
     
@@ -80,7 +80,7 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
     df=data.frame(x=xn)
     p=with(df,ggplot(df, aes(x=factor(0), ymin = x[1], lower = x[2], middle =x[3], upper =x[4], ymax =x[5]))+
       geom_boxplot(stat = "identity", fill=col, size=1, colour=border)+
-      ylab(" ") +xlab(xlabel)+
+      ylab("x") +xlab(xlabel)+
       ggtitle("Vertical Boxplot")
     )
   }

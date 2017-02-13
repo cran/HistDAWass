@@ -52,4 +52,3 @@ doi: 10.1109/TCYB.2015.2389653
 keywords: {Correlation;Covariance matrices;Distribution functions;Histograms;Measurement;Principal component analysis;Shape;Distributional data;Wasserstein distance;principal components analysis;quantiles},
 \url{http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7024099&isnumber=6352949}
 }
-

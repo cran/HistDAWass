@@ -38,4 +38,3 @@ Javier Arroyo, Carlos Mate, Forecasting histogram time series with k-nearest nei
 International Journal of Forecasting, Volume 25, Issue 1, January-March 2009, Pages 192-207,
  ISSN 0169-2070, http://dx.doi.org/10.1016/j.ijforecast.2008.07.003.\cr
 }
-

@@ -21,4 +21,3 @@ Method get.MatH.nrows
 
 It returns the number of rows of a \code{MatH} object
 }
-

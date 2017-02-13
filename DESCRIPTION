@@ -1,8 +1,8 @@
 Package: HistDAWass
 Type: Package
 Title: Histogram-Valued Data Analysis
-Version: 0.1.4
-Date: 2016-01-11
+Version: 0.1.6
+Date: 2017-02-01
 Authors@R: c(person("Antonio", "Irpino", role = c("aut", "cre"),
   	     email = "antonio.irpino@unina2.it"))
 Author: Antonio Irpino [aut, cre]
@@ -17,16 +17,16 @@ Description: In the framework of Symbolic Data Analysis, a relatively new
     histogram time series.
 License: GPL (>= 2)
 Imports: graphics, class, FactoMineR, ggplot2, grid, histogram,
-        grDevices, stats, utils
+        grDevices, stats, colorspace, utils
 Depends: R(>= 3.1), methods
 LazyData: true
-Collate: 'All_classes.R' 'Fuzzy_cmeans.R' 'H_time_series.R'
+Collate: 'All_classes.R' 'Utility.R' 'Fuzzy_cmeans.R' 'H_time_series.R'
         'HistDAWass-package.R' 'Kohonen_maps.R' 'Met_HTS.R'
-        'Met_MatH.R' 'Met_distributionH.R' 'Utility.R'
-        'principal_components.R' 'regression.R'
-        'unsuperv_classification.R' 'Plotting_with_ggplot.R'
-RoxygenNote: 5.0.1
+        'Met_MatH.R' 'Met_distributionH.R' 'principal_components.R'
+        'regression.R' 'unsuperv_classification.R'
+        'Plotting_with_ggplot.R'
+RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2016-01-12 15:58:49 UTC; Antonio
+Packaged: 2017-02-13 09:15:27 UTC; Antonio
 Repository: CRAN
-Date/Publication: 2016-01-12 22:21:47
+Date/Publication: 2017-02-13 11:27:36

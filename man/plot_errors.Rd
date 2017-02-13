@@ -37,4 +37,3 @@ plot_errors(PRED,OBS,"HISTO_QUA")
 plot_errors(PRED,OBS,"HISTO_DEN")
 plot_errors(PRED,OBS,"DENS_KDE")
 }
-

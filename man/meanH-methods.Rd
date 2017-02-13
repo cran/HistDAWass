@@ -33,4 +33,3 @@ meanH(mydist) #---> 4.4
 Antonio Irpino
 }
 \keyword{distribution}
-

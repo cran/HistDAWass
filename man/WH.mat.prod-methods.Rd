@@ -39,4 +39,3 @@ M1<-BLOOD[1:5,]
 M2<-BLOOD[6:10,]
 MAT<-WH.mat.prod(M1,M2,traspose1=TRUE, traspose2=FALSE)
 }
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/Met_HTS.R
 \docType{methods}
 \name{plot-HTS}
-\alias{plot,HTS-method}
 \alias{plot-HTS}
+\alias{plot,HTS-method}
 \title{Method plot for a histogram time series}
 \usage{
 \S4method{plot}{HTS}(x, y = "missing", type = "VIOLIN", border = "black",
@@ -36,4 +36,3 @@ of a histogram time series.
  plot(RetHTS, type="VIOLIN",  border="blue", maxno.perplot=10)
  }
 }
-

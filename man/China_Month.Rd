@@ -21,4 +21,3 @@ Use the command \code{ get.MatH.main.info(China_Month)} for rapid info.
 \author{
 Antonio Irpino, 2014-10-05
 }
-

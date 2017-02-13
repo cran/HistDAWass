@@ -40,4 +40,3 @@ WH.correlation2(M1,M2)
 RN<-runif(get.MatH.nrows(BLOOD))
 WH.correlation2(M1,M2,w=RN)
 }
-

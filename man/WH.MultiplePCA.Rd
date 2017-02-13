@@ -12,7 +12,7 @@ WH.MultiplePCA(data, list.of.vars, quantiles = 10)
 \item{list.of.vars}{A list of  integers, the active variables.}
 
 \item{quantiles}{An integer, it is the number of quantiles used in the analysis.
-Default=1, all the densities are considered.}
+Default=10, all the densities are considered.}
 }
 \value{
 a list with the results of the PCA in the MFA format of package \pkg{FactoMineR} for function MFA
@@ -27,4 +27,3 @@ It is a 1d (one dimension) becuse it is considered just one histogram variable.
 It is a first tentative of extending WH.1d.PCA to the multiple case.All plotting functions must be defined
 in order to have interpretable results. This is an ongoing function, even if the numerical results are methodologically verified.
 }
-

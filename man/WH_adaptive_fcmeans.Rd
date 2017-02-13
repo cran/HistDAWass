@@ -4,7 +4,7 @@
 \alias{WH_adaptive_fcmeans}
 \title{Fuzzy c-means with adaptive distances for histogram-valued data}
 \usage{
-WH_adaptive_fcmeans(x, k, schema, m = 1.6, rep, simplify = FALSE,
+WH_adaptive_fcmeans(x, k = 5, schema, m = 1.6, rep, simplify = FALSE,
   qua = 10, standardize = FALSE, init.weights = "EQUAL",
   weight.sys = "PROD", theta = 2)
 }
@@ -48,4 +48,3 @@ Fuzzy c-means of a dataset of histogram-valued data using different adaptive dis
 results=WH_adaptive_fcmeans(x = BLOOD,k = 2,schema=4,m = 1.5,rep = 3,simplify = TRUE,
                            qua = 10,standardize = TRUE,init.weights='EQUAL', weight.sys='PROD')
 }
-

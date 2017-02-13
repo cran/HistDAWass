@@ -2,8 +2,8 @@
 % Please edit documentation in R/HistDAWass-package.R
 \docType{package}
 \name{HistDAWass-package}
-\alias{HistDAWass}
 \alias{HistDAWass-package}
+\alias{HistDAWass}
 \title{Histogram-Valued Data Analysis}
 \description{
 We consider histogram-valued data, i.e., data described by univariate histograms. The
@@ -39,9 +39,6 @@ Mat_of_distributions<-MatH(x=a, nrows = 2, ncols = 2,
                             rownames=namerows, varnames=namevars, by.row=FALSE )
 
 }
-\author{
-Antonio Irpino <antonio.irpino@unina2.it>
-}
 \references{
 Irpino, A., Verde, R. (2015) \emph{Basic
 statistics for distributional symbolic variables: a new metric-based
@@ -49,5 +46,7 @@ approach} Advances in Data Analysis and Classification, DOI 10.1007/s11634-014-0
 #' Irpino, A. and Romano, E. (2007): \emph{Optimal histogram representation of large data sets: 
 Fisher vs piecewise linear approximations}. RNTI E-9, 99-110.
 }
+\author{
+Antonio Irpino <antonio.irpino@unina2.it>
+}
 \keyword{package}
-

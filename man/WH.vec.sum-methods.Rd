@@ -34,4 +34,3 @@ hsum<-WH.vec.sum(BLOOD)
 RN<-runif(get.MatH.nrows(BLOOD)*get.MatH.ncols(BLOOD))
 hsum<-WH.vec.sum(BLOOD,w=RN)
 }
-

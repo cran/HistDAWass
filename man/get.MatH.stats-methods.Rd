@@ -44,6 +44,7 @@ It returns statistics for each distribution contained in a \code{MatH} object.
 
 \item{\code{MAT}}{- a matrix of values}
 }}
+
 \examples{
 get.MatH.stats(BLOOD) # the means of the distributions in BLOOD dataset
 get.MatH.stats(BLOOD,stat='median') # the medians of the distributions in BLOOD dataset
@@ -58,4 +59,3 @@ get.MatH.stats(BLOOD,stat='kurtosis') #kurtosis indices of the distributions in 
 get.MatH.stats(BLOOD,stat='quantile',prob=0.05) 
 #the fifth percentiles of distributions in BLOOD dataset
 }
-

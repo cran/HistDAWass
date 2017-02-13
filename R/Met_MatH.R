@@ -1234,3 +1234,62 @@ setMethod("plot",
 
           }
 )
+#' Method get.cell.MatH Returns the histogram in a cell of a matrix of distributions
+#' @name get.cell.MatH
+#' @rdname get.cell.MatH-methods
+#' @exportMethod get.cell.MatH
+setGeneric("get.cell.MatH",function(object,r,c) standardGeneric("get.cell.MatH"))#OK
+#' @rdname get.cell.MatH-methods
+#' @aliases get.cell.MatH,MatH-method
+#' @description Returns the histogram data in the r-th row and the c-th column. 
+#' @param object a MatH object, a matrix of distributions.
+#' @param r an integer, the row index.
+#' @param c an integer, the column index
+#' 
+#' @return A \code{distributionH} object.
+#' @examples
+#' get.cell.MatH(BLOOD, r=1,c=1)
+setMethod(f="get.cell.MatH",signature=c(object="MatH",r="numeric",c="numeric"),
+          function(object,r,c){
+            nr=get.MatH.nrows(object)
+            nc=get.MatH.ncols(object)
+            r=as.integer(r)
+            c=as.integer(c)
+            if (r>nr | r<1 | c<1 | c>nc){print('Indices out of range')
+              return(NULL)}else{Dist=object@M[r,c][[1]]}
+            return(Dist)
+          }
+)
+
+
+#' Method set.cell.MatH assign a histogram to a cell of a matrix of histograms
+#' @name set.cell.MatH
+#' @rdname set.cell.MatH-methods
+#' @exportMethod set.cell.MatH
+setGeneric("set.cell.MatH",function(object,mat,r,c) standardGeneric("set.cell.MatH"))#OK
+#' @rdname set.cell.MatH-methods
+#' @aliases set.cell.MatH,MatH-method
+#' @description Assign a histogram data to the r-th row and the c-th column of a matrix of histograms. 
+#' @param object a distributionH object, a matrix of distributions.
+#' @param mat a MatH object, a matrix of distributions.
+#' @param r an integer, the row index.
+#' @param c an integer, the column index
+#' 
+#' @return A \code{MatH} object.
+#' @examples
+#' mydist=distributionH(x=c(0,1,2,3,4), p=c(0,0.1,0.6,0.9,1))
+#' MAT=set.cell.MatH(mydist,BLOOD, r=1,c=1)
+setMethod(f="set.cell.MatH",signature=c(object="distributionH",mat="MatH",r="numeric",c="numeric"),
+          function(object,mat,r,c){
+            nr=get.MatH.nrows(mat)
+            nc=get.MatH.ncols(mat)
+            r=as.integer(r)
+            c=as.integer(c)
+            if (r>nr | r<1 | c<1 | c>nc){print('Indices out of range')
+              return(NULL)}else{mat@M[r,c][[1]]=object}
+            return(mat)
+          }
+)
+
+
+

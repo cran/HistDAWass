@@ -2,8 +2,8 @@
 % Please edit documentation in R/All_classes.R
 \docType{class}
 \name{HTS-class}
-\alias{HTS}
 \alias{HTS-class}
+\alias{HTS}
 \alias{initialize,HTS-method}
 \title{Class HTS}
 \usage{
@@ -22,4 +22,3 @@ Class \code{HTS} defines a histogram time series, i.e. a set of histograms obser
 
 Constructor method of HTS Class (Histogram Time Series)
 }
-

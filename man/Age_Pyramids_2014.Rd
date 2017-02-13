@@ -18,4 +18,3 @@ Thus it contains 229 rows(228 countries plus the World) and 3 variables: "Both.S
 \author{
 Antonio Irpino, 2014-10-05
 }
-

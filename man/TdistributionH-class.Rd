@@ -2,8 +2,8 @@
 % Please edit documentation in R/All_classes.R
 \docType{class}
 \name{TdistributionH-class}
-\alias{TdistributionH}
 \alias{TdistributionH-class}
+\alias{TdistributionH}
 \alias{initialize,TdistributionH-method}
 \title{Class TdistributionH}
 \usage{
@@ -33,4 +33,3 @@ Class \code{TdistributionH} defines a histogram with a time (point or period)
 
 Constructor method of TdistributionH Class
 }
-
