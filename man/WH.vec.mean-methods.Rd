@@ -34,3 +34,4 @@ hmean<-WH.vec.mean(BLOOD)
 RN<-runif(get.MatH.nrows(BLOOD)*get.MatH.ncols(BLOOD))
 hmean<-WH.vec.mean(BLOOD,w=RN)
 }
+

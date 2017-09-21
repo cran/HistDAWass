@@ -33,3 +33,4 @@ skewH(mydist) #---> -1.186017
 Antonio Irpino
 }
 \keyword{distribution}
+

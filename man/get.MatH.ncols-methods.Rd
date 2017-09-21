@@ -21,3 +21,4 @@ Method get.MatH.ncols
 
 It returns the number of columns of a \code{MatH} object
 }
+

@@ -20,3 +20,4 @@ Shortes distance from a point o a 2d segment
 \seealso{
 \code{\link[HistDAWass]{data2hist}} function and \code{\link[HistDAWass]{DouglasPeucker}} function
 }
+

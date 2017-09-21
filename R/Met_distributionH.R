@@ -494,8 +494,10 @@ setGeneric("register", function(object1,object2) standardGeneric("register"))
 setMethod(f="register",signature=c(object1="distributionH",object2="distributionH"),
           function(object1,object2){
             if (!identical(object1@p,object2@p)){
-              commoncdf=sort(unique(c(object1@p,object2@p)))
+              commoncdf=sort(unique(round(c(object1@p,object2@p),digits = 10)))
               nr=length(commoncdf)
+              commoncdf[1]=0
+              commoncdf[nr]=1
               result=matrix(0,nr,3)
               result[,3]=commoncdf
               result[1,1:2]=c(object1@x[1],object2@x[1])
@@ -536,7 +538,7 @@ setMethod(f="register",signature=c(object1="distributionH",object2="distribution
 #' newdist<-checkEmptyBins(mydist)
 #'
 setMethod(f="checkEmptyBins",signature="distributionH",
-            function(object){
+          function(object){
             w=object@p[2:length(object@p)]-object@p[1:(length(object@p)-1)]
             TOL=1e-08
             if (length(which(w<=TOL))){
@@ -808,51 +810,55 @@ setMethod("rQQ",
 setMethod("show",
           signature(object="distributionH"),
           definition=function(object){
-            if(length(object@p)>2){
-            mymat=matrix(0,length(object@p)-1,2)
-            if (length(object@p)>11){
-              cat("Output shows the first five and the last five bins due to eccesive length \n")
-              mymat=matrix(0,12,2)
-              mymat[1,1]="X"
-              mymat[1,2]="p"
-              count=0
-              for (i in 2:6){
+            if(length(object@p)>1){
+              mymat=matrix(0,length(object@p)-1,2)
+              if (length(object@p)>11){
+                cat("Output shows the first five and the last five bins due to eccesive length \n")
+                mymat=matrix(0,12,2)
+                mymat[1,1]="X"
+                mymat[1,2]="p"
+                count=0
+                for (i in 2:6){
+                  count=count+1
+                  mymat[count+1,1]=paste("[",format(object@x[(i-1)],digits=5),"-",format(object@x[i],digits=5),")",sep="") 
+                  mymat[count+1,2]=paste(format(object@p[i]-object@p[i-1],digits=4))
+                }
                 count=count+1
-                mymat[count+1,1]=paste("[",format(object@x[(i-1)],digits=5),"-",format(object@x[i],digits=5),")",sep="") 
-                mymat[count+1,2]=paste(format(object@p[i]-object@p[i-1],digits=4))
+                mymat[count+1,1]=paste("...") 
+                mymat[count+1,2]=paste("...")
+                for (i in (length(object@p)-4):length(object@p)){
+                  count=count+1
+                  mymat[count+1,1]=paste("[",format(object@x[(i-1)],digits=5)," ; ",format(object@x[i],digits=5),")",sep="")  
+                  mymat[count+1,2]=paste(format(object@p[i]-object@p[i-1],digits=4))
+                }
+                rownames(mymat)=c("", paste("Bin",1:5,sep="_"),"...",
+                                  paste("Bin",(length(object@p)-5):(length(object@p)-1),sep="_"))
+                write.table(format(mymat, justify="right",digits=5),
+                            row.names=T, col.names=F, quote=F)  
               }
-              count=count+1
-              mymat[count+1,1]=paste("...") 
-              mymat[count+1,2]=paste("...")
-              for (i in (length(object@p)-4):length(object@p)){
-                count=count+1
-                mymat[count+1,1]=paste("[",format(object@x[(i-1)],digits=5)," ; ",format(object@x[i],digits=5),")",sep="")  
-                mymat[count+1,2]=paste(format(object@p[i]-object@p[i-1],digits=4))
+              else{
+                mymat=matrix(0,length(object@p),2)
+                mymat[1,1]="X"
+                mymat[1,2]="p"
+                if(length(object@p)>2){
+                  for (i in 2:(length(object@p)-1)){
+                    mymat[i,1]=paste("[ ",format(object@x[(i-1)],digits=5)," ; ",format(object@x[i],digits=5)," )",sep="")  
+                    mymat[i,2]=paste(format(object@p[i]-object@p[i-1],digits=4))
+                  }
+                }
+                mymat[length(object@p),1]=paste("[ ",format(object@x[(length(object@p)-1)],digits=5),
+                                                " ; ",format(object@x[length(object@p)],digits=5)," ]",sep="")  
+                mymat[length(object@p),2]=paste(format(object@p[length(object@p)]-object@p[length(object@p)-1],digits=4))
+                
+                rownames(mymat)=c(" ", paste("Bin",1:(length(object@p)-1),sep="_"))
+                write.table(format(mymat, justify="right"),
+                            row.names=T, col.names=F, quote=F)
               }
-              rownames(mymat)=c("", paste("Bin",1:5,sep="_"),"...",
-                                paste("Bin",(length(object@p)-5):(length(object@p)-1),sep="_"))
-              write.table(format(mymat, justify="right",digits=5),
-                          row.names=T, col.names=F, quote=F)  
-            }
-            else{
-              mymat=matrix(0,length(object@p),2)
-              mymat[1,1]="X"
-              mymat[1,2]="p"
-              for (i in 2:(length(object@p)-1)){
-                mymat[i,1]=paste("[ ",format(object@x[(i-1)],digits=5)," ; ",format(object@x[i],digits=5)," )",sep="")  
-                mymat[i,2]=paste(format(object@p[i]-object@p[i-1],digits=4))
-              }
-              mymat[length(object@p),1]=paste("[ ",format(object@x[(length(object@p)-1)],digits=5),
-                                              " ; ",format(object@x[length(object@p)],digits=5)," ]",sep="")  
-              mymat[length(object@p),2]=paste(format(object@p[length(object@p)]-object@p[length(object@p)-1],digits=4))
+              cat(paste("\n mean = ",object@m, "  std  = ",object@s,"\n "))
               
-              rownames(mymat)=c(" ", paste("Bin",1:(length(object@p)-1),sep="_"))
-              write.table(format(mymat, justify="right"),
-                          row.names=T, col.names=F, quote=F)
+            } else {
+              (cat("Empty distributionH\n"))
             }
-            cat(paste("\n mean = ",object@m, "  std  = ",object@s,"\n "))
-            
-            } else (cat("Empty distributionH\n"))
           }
 )
 

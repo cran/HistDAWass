@@ -46,3 +46,4 @@ of histogram symbolic data. In: Batanjeli et al. Data Science and Classification
 \seealso{
 \code{\link{hclust}} of \pkg{stat} package for further details.
 }
+

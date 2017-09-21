@@ -28,3 +28,4 @@ This functon return the mean of a \code{distributionH} object.
 \examples{
 SUB_RetHTS=subsetHTS(RetHTS,from=1, to=20)# the first 20 elements
 }
+

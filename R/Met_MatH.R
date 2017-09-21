@@ -23,7 +23,7 @@
 #' #bulding an empty 10 by 4 matrix of histograms
 #' MAT=MatH(nrows=10,ncols=4)
 
-MatH=function(x=list(new('distributionH')), nrows=1, ncols=1,rownames=NULL,varnames=NULL, by.row=FALSE ){
+MatH=function(x=NULL, nrows=1, ncols=1,rownames=NULL,varnames=NULL, by.row=FALSE ){
   MAT=new('MatH', 
           nrows=nrows,
           ncols=ncols,
@@ -34,23 +34,23 @@ MatH=function(x=list(new('distributionH')), nrows=1, ncols=1,rownames=NULL,varna
 }
 
 # overriding of "[" operator for MatH object ----
- #' extract from a MatH Method [
- #' @name [
- #' @rdname extract-methods
- #' @aliases [,MatH,ANY,ANY,ANY-method
- #' [,MatH-method
-  #' @description This method overrides the "[" operator for a  \code{matH} object.
- #' @param x a \code{matH} object
- #' @param i  a set of integer values identifying the rows
- #' @param j  a set of integer values identifying the columns
- #' @param ... not useful
- #' @param drop a logical value inherited from the basic method "[" but not used (default=TRUE)
- #' @return A \code{matH} object
- #' @examples
- #' D=BLOOD #the BLOOD dataset
- #' SUB_D=BLOOD[c(1,2,5),c(1,2)]
- #' @importFrom stats variable.names
- #' @export
+#' extract from a MatH Method [
+#' @name [
+#' @rdname extract-methods
+#' @aliases [,MatH,ANY,ANY,ANY-method
+#' [,MatH-method
+#' @description This method overrides the "[" operator for a  \code{matH} object.
+#' @param x a \code{matH} object
+#' @param i  a set of integer values identifying the rows
+#' @param j  a set of integer values identifying the columns
+#' @param ... not useful
+#' @param drop a logical value inherited from the basic method "[" but not used (default=TRUE)
+#' @return A \code{matH} object
+#' @examples
+#' D=BLOOD #the BLOOD dataset
+#' SUB_D=BLOOD[c(1,2,5),c(1,2)]
+#' @importFrom stats variable.names
+#' @export
 setMethod("[",
           signature(x = "MatH"),
           function (x, i, j, ..., drop=TRUE) 
@@ -63,17 +63,33 @@ setMethod("[",
               if (missing(i)) i=c(1:nrow(x@M))
               if (missing(j)) j=c(1:ncol(x@M))
             }
-            
-            MAT=new("MatH",length(i),length(j))
-            for (r in 1:length(i)){
-              for (c in 1:length(j)){
-                MAT@M[r,c][[1]]=x@M[i[r],j[c]][[1]]
+            # consider negative indexes!TO BE DONE!!
+            if (min(i)<=0 | min(j)<=0){
+              stop("negative indexes are not allowed in subsetting [,] a MatH object")
               }
-            }
             
-            rownames(MAT@M)=row.names(x@M)[i]
-            colnames(MAT@M)=variable.names(x@M)[j]
-            return(MAT)
+            if (length(i)>1&length(j)>1){
+              x@M=as.matrix(x@M[i,j])
+            }else{
+              if (length(i)==1 & length(j)==1){
+                namerow=row.names(x@M)[i]
+                namecol=variable.names(x@M)[j]
+                x@M=as.matrix(x@M[i,j])
+                rownames(x@M)=namerow
+                colnames(x@M)=namecol
+              }else{
+                if(length(i)==1){
+                  namerow=row.names(x@M)[i]
+                  x@M=t(as.matrix(x@M[i,j]))
+                  rownames(x@M)=namerow
+                }else{
+                  namecol=variable.names(x@M)[j]
+                  x@M=as.matrix(x@M[i,j])
+                  colnames(x@M)=namecol
+                }
+              }  
+            } 
+            return(x)
           }
 )
 # methods for getting information from a MatH
@@ -141,7 +157,7 @@ setMethod(f="get.MatH.varnames",signature=c(object="MatH"),
 #' Method get.MatH.main.info
 #' @name get.MatH.main.info
 #' @rdname get.MatH.main.info-methods
-#' @exportMethod get.MatH.varnames
+#' @exportMethod get.MatH.main.info
 setGeneric("get.MatH.main.info",function(object) standardGeneric("get.MatH.main.info"))
 #' @rdname get.MatH.main.info-methods
 #' @aliases get.MatH.main.info,MatH-method
@@ -155,7 +171,7 @@ setGeneric("get.MatH.main.info",function(object) standardGeneric("get.MatH.main.
 #' 
 setMethod(f="get.MatH.main.info",signature=c(object="MatH"),
           function(object){
-              return(list(nrows=get.MatH.nrows(object), ncols=get.MatH.ncols(object),
+            return(list(nrows=get.MatH.nrows(object), ncols=get.MatH.ncols(object),
                         rownames=get.MatH.rownames(object),varnames=get.MatH.varnames(object)))
           }
 )
@@ -239,7 +255,7 @@ setMethod(f="get.MatH.stats",signature=c(object="MatH"),
             if (stat=='quantile'){
               return(list(stat=stat, prob=prob, mat=MAT))
             } else{
-            return(list(stat=stat, mat=MAT))
+              return(list(stat=stat, mat=MAT))
             }
           }
 )
@@ -281,11 +297,10 @@ setMethod(f="WH.bind.row",signature=c(object1="MatH",object2="MatH"),
             nrow1=nrow(object1@M)
             nrow2=nrow(object2@M)
             if (ncol1!=ncol2){stop("The two matrix must have the same number of columns")}
-            NewMat=new("MatH", nrows=nrow1+nrow2,ncols=ncol1)
-            NewMat@M=rbind(object1@M,object2@M)
-            return(NewMat)
+            object1@M=rbind(object1@M,object2@M)
+            return(object1)
           }
-          )
+)
 #' @rdname WH.bind.col-methods
 #' @aliases WH.bind.col,MatH-method
 #' @description It attaches two \code{MatH} objects with the same rows by colums.
@@ -303,9 +318,9 @@ setMethod(f="WH.bind.col",signature=c(object1="MatH",object2="MatH"),
             nrow1=nrow(object1@M)
             nrow2=nrow(object2@M)
             if (nrow1!=nrow2){stop("The two matrix must have the same number of rows")}
-            NewMat=new("MatH", nrows=nrow1,ncols=ncol1+ncol2)
-            NewMat@M=cbind(object1@M,object2@M)
-            return(NewMat)
+            #NewMat=new("MatH", nrows=nrow1,ncols=ncol1+ncol2)
+            object1@M=cbind(object1@M,object2@M)
+            return(object1)
           }
 )
 #' @rdname WH.bind-methods
@@ -441,8 +456,8 @@ setMethod(f="WH.mat.prod",signature=c(object1="MatH",object2="MatH"),
             
             
             MAT=matrix(0,nrows1,ncols2)
-#             cat("Fisrt matrix dimensions ", nrow(object1@M), "x", ncol(object1@M), "\n",
-#                 "Second matrix dimensions ", nrow(object2@M), "x", ncol(object2@M), "\n")
+            #             cat("Fisrt matrix dimensions ", nrow(object1@M), "x", ncol(object1@M), "\n",
+            #                 "Second matrix dimensions ", nrow(object2@M), "x", ncol(object2@M), "\n")
             for (r in 1:nrows1){
               for (c in 1:ncols2){
                 for (els in 1:ncols1){
@@ -512,7 +527,7 @@ setGeneric("WH.correlation2",function(object1,object2,...) standardGeneric("WH.c
 #' # generate a set of random weights
 #' RN<-runif(get.MatH.nrows(BLOOD)*get.MatH.ncols(BLOOD))
 #' hsum<-WH.vec.sum(BLOOD,w=RN)
-
+### SUM of distributions ----
 setMethod(f="WH.vec.sum",signature=c(object="MatH"),
           function(object,w=numeric(0)){
             nrows=nrow(object@M)
@@ -624,11 +639,11 @@ setMethod(f="WH.SSQ",signature=c(object="MatH"),
             for (v1 in 1:ncols){
               for (v2 in v1:ncols){
                 for (indiv in 1:nrows){
-                   if (v1==v2){
-                     DEV_MAT[v1,v2]=DEV_MAT[v1,v2]+w[indiv,1]*((object@M[indiv,v1][[1]]@s)^2+(object@M[indiv,v1][[1]]@m)^2)
-                   }else{
+                  if (v1==v2){
+                    DEV_MAT[v1,v2]=DEV_MAT[v1,v2]+w[indiv,1]*((object@M[indiv,v1][[1]]@s)^2+(object@M[indiv,v1][[1]]@m)^2)
+                  }else{
                     DEV_MAT[v1,v2]=DEV_MAT[v1,v2]+w[indiv,1]*dotpW(object@M[indiv,v1][[1]],object@M[indiv,v2][[1]])
-                   }
+                  }
                 }
                 if (v2>v1){
                   DEV_MAT[v1,v2]=DEV_MAT[v1,v2]-sum(w)*dotpW(MEANS@M[1,v1][[1]],MEANS@M[1,v2][[1]])
@@ -1077,19 +1092,11 @@ setMethod(f="registerMH",signature=c(object="MatH"),
                 commoncdf=rbind(commoncdf,t(t(object@M[i,j][[1]]@p)))
               }
             }
-            commoncdf=sort(unique(commoncdf))
+            commoncdf=sort(unique(round(commoncdf,digits = 10)))
+            commoncdf[1]=0
+            commoncdf[length(commoncdf)]=1
             #check for tiny bins and for very long vectors of wheights
-            diffs=commoncdf[2:length(commoncdf)]-commoncdf[1:(length(commoncdf)-1)]
-            diffs[which(diffs<1e-8)]=0
-            commoncdf=sort(unique(cumsum(x = c(0,diffs))))
-            commoncdf=commoncdf/commoncdf[length(commoncdf)]
-#             todelete=which(diffs<1e-8)
-#             if (length(todelete)>0){
-#               commoncdf=as.vector(commoncdf[-todelete,1])
-#               if (coomoncdf[length(commoncdf)]<1){
-#                 coomoncdf=c(commoncdf,1)
-#               }
-#             }
+            
             #end of check
             nr=length(commoncdf)
             result=matrix(0,nr,(ndis+1))
@@ -1159,7 +1166,7 @@ setMethod("show",
           signature(object="MatH"),
           definition = function(object){
             cat("a matrix of distributions \n", paste(ncol(object@M)," variables ",
-                                                     nrow(object@M), " rows \n" ), "each distibution in the cell is represented by the mean and the standard deviation \n ")
+                                                      nrow(object@M), " rows \n" ), "each distibution in the cell is represented by the mean and the standard deviation \n ")
             mymat=matrix(0,nrow(object@M)+1,ncol(object@M))
             for (i in 1:ncol(object@M)){mymat[1,i]=colnames(object@M)[i]}
             for (i in 1:nrow(object@M)){
@@ -1169,22 +1176,22 @@ setMethod("show",
                 }
                 else{
                   if ((abs(object@M[i,j][[1]]@m)>1e5 || abs(object@M[i,j][[1]]@m)<1e-5)&&
-                        (object@M[i,j][[1]]@s>1e5 || object@M[i,j][[1]]@s<1e-5))  {
+                      (object@M[i,j][[1]]@s>1e5 || object@M[i,j][[1]]@s<1e-5))  {
                     mymat[i+1,j]=paste("[m=",format(object@M[i,j][[1]]@m,digits=5,scientific=TRUE),
                                        " ,s=",format(object@M[i,j][[1]]@s,digits=5,scientific=TRUE),"]")
                   }
                   if ((abs(object@M[i,j][[1]]@m)<=1e5 && abs(object@M[i,j][[1]]@m)>=1e-5)&&
-                        (object@M[i,j][[1]]@s<=1e5 || object@M[i,j][[1]]@s>=1e-5))  {
+                      (object@M[i,j][[1]]@s<=1e5 || object@M[i,j][[1]]@s>=1e-5))  {
                     mymat[i+1,j]=paste("[m=",format(object@M[i,j][[1]]@m,digits=5),
                                        " ,s=",format(object@M[i,j][[1]]@s,digits=5),"]")
                   }
                   if ((abs(object@M[i,j][[1]]@m)>1e5 || abs(object@M[i,j][[1]]@m)<1e-5)&&
-                        (object@M[i,j][[1]]@s<=1e5 && object@M[i,j][[1]]@s>=1e-5)) {
+                      (object@M[i,j][[1]]@s<=1e5 && object@M[i,j][[1]]@s>=1e-5)) {
                     mymat[i+1,j]=paste("[m=",format(object@M[i,j][[1]]@m,digits=5,scientific=TRUE),
                                        " ,s=",format(object@M[i,j][[1]]@s,digits=5),"]")
                   }
                   if ((abs(object@M[i,j][[1]]@m)<=1e5 && abs(object@M[i,j][[1]]@m)>=1e-5)&&
-                        (object@M[i,j][[1]]@s>1e5 || object@M[i,j][[1]]@s<1e-5))  {
+                      (object@M[i,j][[1]]@s>1e5 || object@M[i,j][[1]]@s<1e-5))  {
                     mymat[i+1,j]=paste("[m=",format(object@M[i,j][[1]]@m,digits=5),
                                        " ,s=",format(object@M[i,j][[1]]@s,digits=5,scientific=TRUE),"]")
                   }
@@ -1198,11 +1205,11 @@ setMethod("show",
             write.table(format(mymat,justify="centre"),row.names=T, col.names=F,quote=F)
           }
 )
- if (!isGeneric("plot")) { 
-   setGeneric("plot", 
-              function(x, y, ...) standardGeneric("plot")) 
- } 
-## --- Plot overloading
+if (!isGeneric("plot")) { 
+  setGeneric("plot", 
+             function(x, y, ...) standardGeneric("plot")) 
+} 
+#   Plot overloading ----
 #' Method plot for a matrix  of histograms
 #' @name plot-MatH
 #' @docType methods
@@ -1217,6 +1224,7 @@ setMethod("show",
 #'  "DENS"=a density approximation, \cr
 #'  "BOXPLOT"=l boxplot
 #' @param border (optional) a string the color of the border of the plot, default="black".
+#' @param angL (optional) angle of labels of rows (DEFAULT=330).
 #' @examples
 #' plot(BLOOD) #plots BLOOD dataset
 #' \dontrun{
@@ -1229,10 +1237,8 @@ setMethod("show",
 
 setMethod("plot",
           signature(x = "MatH"),
-          function (x, y="missing", type="HISTO",border="black") 
-          {plot.M(x, type=type, border=border)
-
-          }
+          function (x, y="missing", type="HISTO",border="black",angL=330) 
+          {plot.M(x, type=type, border=border,angL=angL)}
 )
 #' Method get.cell.MatH Returns the histogram in a cell of a matrix of distributions
 #' @name get.cell.MatH

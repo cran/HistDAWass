@@ -33,3 +33,4 @@ p<-compP(mydist,5)
 
 }
 \keyword{distribution}
+

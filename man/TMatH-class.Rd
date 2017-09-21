@@ -2,8 +2,8 @@
 % Please edit documentation in R/All_classes.R
 \docType{class}
 \name{TMatH-class}
-\alias{TMatH-class}
 \alias{TMatH}
+\alias{TMatH-class}
 \alias{initialize,TMatH-method}
 \title{Class TMatH}
 \usage{
@@ -26,3 +26,4 @@ Class \code{TMatH} defines a matrix of histograms, a \code{TMatH} object, with a
 
 Constructor method of TdistributionH Class
 }
+

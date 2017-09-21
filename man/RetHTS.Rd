@@ -11,3 +11,4 @@ A histogram-valued dataset of returns of dollar vs yen change rates
 \author{
 Antonio Irpino, 2014-10-05
 }
+

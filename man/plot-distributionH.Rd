@@ -2,8 +2,8 @@
 % Please edit documentation in R/Met_distributionH.R
 \docType{methods}
 \name{plot-distributionH}
-\alias{plot-distributionH}
 \alias{plot,distributionH-method}
+\alias{plot-distributionH}
 \title{plot for a distributionH object}
 \usage{
 \S4method{plot}{distributionH}(x, type = "HISTO", col = "green",
@@ -38,3 +38,4 @@ of the histogram.
  plot(mydist, type="CDF") #plots the cumulative distribution function of mydist
  plot(mydist, type="QF") #plots the quantile function of mydist
 }
+

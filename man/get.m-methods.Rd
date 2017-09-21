@@ -25,3 +25,4 @@ This functon return the mean of a \code{distributionH} object.
 D=distributionH(x=c(1,2,3,4),p=c(0,0.2,0.6, 1))
 get.m(D) #returns the mean of D
 }
+

@@ -2,12 +2,10 @@
 % Please edit documentation in R/Met_distributionH.R
 \docType{methods}
 \name{minus}
-\alias{minus}
 \alias{-,distributionH,distributionH-method}
-\alias{minus}
+\alias{-,distributionH,numeric-method}
 \alias{-,numeric,distributionH-method}
 \alias{minus}
-\alias{-,distributionH,numeric-method}
 \title{Method -}
 \usage{
 \S4method{-}{distributionH,distributionH}(e1, e2)
@@ -31,3 +29,4 @@ the difference of a distribution and a number according to the L2 Wasssertein
 \note{
 it may not works properly if the difference is not a distribution
 }
+

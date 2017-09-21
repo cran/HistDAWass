@@ -47,3 +47,4 @@ plot(mydist)
 \seealso{
 \code{\link[histogram]{histogram}} function
 }
+

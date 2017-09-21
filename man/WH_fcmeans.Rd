@@ -46,7 +46,7 @@ from the prototypes) value at the end of the run.}
 \item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model. 
 (The higher the better)}
 }}
-
 \examples{
 results=WH_fcmeans(x = BLOOD,k = 2,m = 1.5,rep = 10,simplify = TRUE,qua = 10,standardize = TRUE)
 }
+

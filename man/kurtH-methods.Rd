@@ -34,3 +34,4 @@ kurtH(mydist) #---> 1.473242
 Antonio Irpino
 }
 \keyword{distribution}
+

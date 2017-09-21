@@ -25,9 +25,9 @@ series to a histogram time series,using L2 Wasserstein distance.
 
 \item{\code{AveragedHTS}}{The smoothed HTS}
 }}
-
 \examples{
 mov.expo.smooth=HTS.exponential.smoothing(HTS=RetHTS, alpha=0.8)
 # a show method for HTS must be implemented you can see it using
 # str(mov.expo.smooth$AveragedHTS)
 }
+

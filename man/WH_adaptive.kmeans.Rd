@@ -61,7 +61,6 @@ from the centers) value at the end of the run.}
 \item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model. 
 (The higher the better)}
 }}
-
 \examples{
 results=WH_adaptive.kmeans(x = BLOOD,k = 2, rep = 10,simplify = TRUE,qua = 10,standardize = TRUE)
 }
@@ -70,3 +69,4 @@ Irpino A., Rosanna V., De Carvalho F.A.T. (2014). Dynamic clustering of histogra
 based on adaptive squared Wasserstein distances. EXPERT SYSTEMS WITH APPLICATIONS, vol. 41, p. 3351-3366, 
 ISSN: 0957-4174, doi: http://dx.doi.org/10.1016/j.eswa.2013.12.001
 }
+

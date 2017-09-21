@@ -34,3 +34,4 @@ stdH(mydist) #---> 2.563851
 Antonio Irpino
 }
 \keyword{distribution}
+

@@ -738,3 +738,28 @@ WH.ADPT.FCMEANS.SSQ_FAST=function(MM,x,memb,m,lambdas,proto,theta){
   }
   return(SSQ)
 }
+
+
+# fastEmptyMatH=function(nrows,ncols,nameR,nameC){
+#   MAT=MatH()
+#   cols=1
+#   diffcol=ncols-cols
+#   while (ncols>=(cols*2)){
+#     cols=cols*2
+#     MAT@M=cbind(MAT@M,MAT@M)
+#     diffcol=ncols-cols
+#   }
+#   MAT@M=cbind(MAT@M,MAT@M[1,1:diffcol])
+#   rows=1
+#   diffrow=nrows-rows
+#   while (nrows>=(rows*2)){
+#     rows=rows*2
+#     MAT@M=rbind(MAT@M,MAT@M)
+#     diffrow=nrows-rows
+#   }
+#   MAT@M=rbind(MAT@M,MAT@M[1:diffrow,])
+#   
+#   rownames(MAT@M)=nameR
+#   colnames(MAT@M)=nameC
+#   return(MAT)
+# }

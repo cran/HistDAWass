@@ -2,8 +2,8 @@
 % Please edit documentation in R/Met_MatH.R
 \docType{methods}
 \name{show-MatH}
-\alias{show-MatH}
 \alias{show,MatH-method}
+\alias{show-MatH}
 \title{Method show for MatH}
 \usage{
 \S4method{show}{MatH}(object)
@@ -20,3 +20,4 @@ show(BLOOD)
 print(BLOOD)
 BLOOD
 }
+

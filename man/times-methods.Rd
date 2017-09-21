@@ -2,12 +2,10 @@
 % Please edit documentation in R/Met_distributionH.R
 \docType{methods}
 \name{*-methods}
-\alias{*-methods}
 \alias{*,distributionH,distributionH-method}
-\alias{*-methods}
+\alias{*,distributionH,numeric-method}
 \alias{*,numeric,distributionH-method}
 \alias{*-methods}
-\alias{*,distributionH,numeric-method}
 \title{Method *}
 \usage{
 \S4method{*}{distributionH,distributionH}(e1, e2)
@@ -28,3 +26,4 @@ the product of a number and a distribution according to the L2 Wasssertein
 
 the product of a number and a distribution according to the L2 Wasssertein
 }
+

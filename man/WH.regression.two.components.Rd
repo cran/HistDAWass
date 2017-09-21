@@ -45,3 +45,4 @@ Irpino A, Verde R (in press 2015). Linear regression for numeric symbolic variab
 based on Wasserstein Distance. ADVANCES IN DATA ANALYSIS AND CLASSIFICATION, ISSN: 1862-5347, DOI:10.1007/s11634-015-0197-7 \cr
 An extended version is available  on arXiv repository arXiv:1202.1436v2 \url{http://arxiv.org/abs/1202.1436v2}
 }
+

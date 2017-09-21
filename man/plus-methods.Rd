@@ -4,10 +4,8 @@
 \name{+}
 \alias{+}
 \alias{+,distributionH,distributionH-method}
-\alias{+}
-\alias{+,numeric,distributionH-method}
-\alias{+}
 \alias{+,distributionH,numeric-method}
+\alias{+,numeric,distributionH-method}
 \title{Method +}
 \usage{
 \S4method{+}{distributionH,distributionH}(e1, e2)
@@ -31,3 +29,4 @@ the sum of a number and a distribution according to the L2 Wasssertein
 
 the sum of adistribution and a number according to the L2 Wasssertein
 }
+

@@ -40,3 +40,4 @@ y<-compQ(mydist,0.9) #the ninth decile
 \author{
 Antonio Irpino
 }
+

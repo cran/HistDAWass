@@ -34,11 +34,12 @@ Quantile-Quantile correlation between two distributions
  ## OUTPUT 0.916894
 
 }
+\author{
+Antonio Irpino
+}
 \references{
 Irpino, A., Verde, R. (2015) \emph{Basic
 statistics for distributional symbolic variables: a new metric-based
 approach} Advances in Data Analysis and Classification, DOI 10.1007/s11634-014-0176-4
 }
-\author{
-Antonio Irpino
-}
+
