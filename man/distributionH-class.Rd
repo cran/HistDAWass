@@ -2,9 +2,10 @@
 % Please edit documentation in R/All_classes.R, R/Met_distributionH.R
 \docType{class}
 \name{distributionH-class}
-\alias{distributionH}
 \alias{distributionH-class}
+\alias{distributionH}
 \alias{initialize,distributionH-method}
+\alias{distributionH}
 \title{Class distributionH.}
 \usage{
 \S4method{initialize}{distributionH}(.Object, x = numeric(0),
@@ -45,6 +46,7 @@ Class \code{distributionH} defines a histogram object
  Objects can be created by calls of the form
 \code{new("distributionH", x, p, m, s)}.
 }
+
 \examples{
  #---- initialize a distributionH object mydist
 # from a simple histogram 
@@ -67,9 +69,6 @@ str(mydist)
 # or using
 mydist=distributionH(x=c(1,2,3),p=c(0,0.4, 1))
 }
-\author{
-Antonio Irpino
-}
 \references{
 Irpino, A., Verde, R. (2015) \emph{Basic
 statistics for distributional symbolic variables: a new metric-based
@@ -79,5 +78,7 @@ approach} Advances in Data Analysis and Classification, DOI
 \seealso{
 \code{\link{meanH}} computes the mean. \code{\link{stdH}} computes the standard deviation.
 }
+\author{
+Antonio Irpino
+}
 \keyword{classes}
-

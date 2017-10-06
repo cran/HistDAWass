@@ -36,4 +36,3 @@ newdist<-checkEmptyBins(mydist)
 Antonio Irpino
 }
 \keyword{distribution}
-

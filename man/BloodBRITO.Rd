@@ -17,4 +17,3 @@ data set list 10 patients described by 2 variables.
 \author{
 Antonio Irpino, 2014-10-05
 }
-

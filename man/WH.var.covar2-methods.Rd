@@ -40,4 +40,3 @@ WH.var.covar2(M1,M2)
 RN<-runif(get.MatH.nrows(BLOOD))
 WH.var.covar2(M1,M2,w=RN)
 }
-

@@ -16,4 +16,3 @@ data set list 14 groups of patients described by 3 variables.
 \author{
 Antonio Irpino, 2014-10-05
 }
-

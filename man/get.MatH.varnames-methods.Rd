@@ -21,4 +21,3 @@ Method get.MatH.varnames
 
 It returns the labels of the columns, or the names of the variables, of a \code{MatH} object
 }
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/Met_MatH.R
 \docType{methods}
 \name{plot-MatH}
-\alias{plot,MatH-method}
 \alias{plot-MatH}
+\alias{plot,MatH-method}
 \title{Method plot for a matrix  of histograms}
 \usage{
 \S4method{plot}{MatH}(x, y = "missing", type = "HISTO", border = "black",
@@ -35,4 +35,3 @@ plot(BLOOD, type="DENS",  border="blue") #plots a matrix of densities
 plot(BLOOD, type="BOXPLOT") #plots a  boxplots
 }
 }
-

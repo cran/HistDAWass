@@ -6,7 +6,7 @@
 \title{A monthly climatic dataset of China}
 \format{a \code{MatH} object, a matrix of distributions.}
 \source{
-raw data are available here: \url{http://cdiac.ornl.gov/ndps/tr055.html}
+raw data are available here: \url{http://cdiac.ess-dive.lbl.gov/ftp/tr055/}
 }
 \description{
 A dataset with the distributions of some climatic variables collected for each month in 60 stations of China.
@@ -21,4 +21,3 @@ Use the command \code{ get.MatH.main.info(China_Month)} for rapid info.
 \author{
 Antonio Irpino, 2014-10-05
 }
-

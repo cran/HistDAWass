@@ -2,9 +2,10 @@
 % Please edit documentation in R/All_classes.R, R/Met_MatH.R
 \docType{class}
 \name{MatH-class}
-\alias{MatH}
 \alias{MatH-class}
+\alias{MatH}
 \alias{initialize,MatH-method}
+\alias{MatH}
 \title{Class MatH.}
 \usage{
 \S4method{initialize}{MatH}(.Object, nrows = 1, ncols = 1,
@@ -72,14 +73,13 @@ showClass("MatH")
 #bulding an empty 10 by 4 matrix of histograms
 MAT=MatH(nrows=10,ncols=4)
 }
-\author{
-Antonio Irpino
-}
 \references{
 Irpino, A., Verde, R. (2015) \emph{Basic
 statistics for distributional symbolic variables: a new metric-based
 approach} Advances in Data Analysis and Classification, DOI
 10.1007/s11634-014-0176-4
 }
+\author{
+Antonio Irpino
+}
 \keyword{classes}
-

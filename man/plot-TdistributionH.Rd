@@ -2,8 +2,8 @@
 % Please edit documentation in R/Met_HTS.R
 \docType{methods}
 \name{plot-TdistributionH}
-\alias{plot,TdistributionH-method}
 \alias{plot-TdistributionH}
+\alias{plot,TdistributionH-method}
 \title{plot for a TdistributionH object}
 \usage{
 \S4method{plot}{TdistributionH}(x, type = "HISTO", col = "green",
@@ -24,4 +24,3 @@
 A plot function for a \code{TdistributionH} object. The function returns a representation 
 of the histogram.
 }
-

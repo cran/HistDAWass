@@ -572,6 +572,7 @@ setMethod(f="WH.vec.sum",signature=c(object="MatH"),
 setMethod(f="WH.vec.mean",signature=c(object="MatH"),
           function(object,w=numeric(0)){
             #if (length(object@M)==1) return(object)
+            # WH MEAN H qua si puo migliorare -----
             nrows=nrow(object@M)
             ncols=ncol(object@M)
             nelem=nrows*ncols
@@ -586,13 +587,16 @@ setMethod(f="WH.vec.mean",signature=c(object="MatH"),
             }
             w=matrix(w,nrows,ncols)
             w=w/sum(w)
-            MEAN=new("distributionH",c(0,0),c(0,1))
-            for (c in 1:ncols){
-              for (r in 1:nrows){
-                MEAN=MEAN+w[r,c]*object@M[r,c][[1]]
+            if (ncols==1){
+            MEAN=MEAN_VA(object,w)}
+            else{
+              w2=colSums(w)
+              w2=w2/sum(w2)
+              MEAN=w2[1]*MEAN_VA(object[,1],w[,1]);
+              for (c in 2:ncols){
+                MEAN=MEAN+w2[c]*MEAN_VA(object[,c],w[,c])
               }
             }
-            
             return(MEAN)
           }
 )
@@ -627,36 +631,40 @@ setMethod(f="WH.SSQ",signature=c(object="MatH"),
                 stop('Weights must be positive!!')
             }
             w=matrix(w,nrows,1)
+            DEV_MAT=SSQ_RCPP(object, w)
             #w=w/sum(w)
-            DEV_MAT=matrix(0,ncols,ncols)
+            #DEV_MAT=matrix(0,ncols,ncols)
             colnames(DEV_MAT)=colnames(object@M)
             rownames(DEV_MAT)=colnames(object@M)
             #compute the means
-            MEANS=new("MatH",1,ncols)
-            for (v1 in 1:ncols){
-              MEANS@M[1,v1][[1]]=WH.vec.mean(object[,v1],w)
-            }            
-            for (v1 in 1:ncols){
-              for (v2 in v1:ncols){
-                for (indiv in 1:nrows){
-                  if (v1==v2){
-                    DEV_MAT[v1,v2]=DEV_MAT[v1,v2]+w[indiv,1]*((object@M[indiv,v1][[1]]@s)^2+(object@M[indiv,v1][[1]]@m)^2)
-                  }else{
-                    DEV_MAT[v1,v2]=DEV_MAT[v1,v2]+w[indiv,1]*dotpW(object@M[indiv,v1][[1]],object@M[indiv,v2][[1]])
-                  }
-                }
-                if (v2>v1){
-                  DEV_MAT[v1,v2]=DEV_MAT[v1,v2]-sum(w)*dotpW(MEANS@M[1,v1][[1]],MEANS@M[1,v2][[1]])
-                  DEV_MAT[v2,v1]=DEV_MAT[v1,v2]
-                }else{
-                  DEV_MAT[v1,v1]=DEV_MAT[v1,v1]-sum(w)*(MEANS@M[1,v1][[1]]@s^2+MEANS@M[1,v1][[1]]@m^2)
-                }
-              }
-            }
-            if(ncols==1){
-              return(as.vector(DEV_MAT))
-            }
-            else return(DEV_MAT)
+            # MEANS=new("MatH",1,ncols)
+            # for (v1 in 1:ncols){
+            #   MEANS@M[1,v1][[1]]=WH.vec.mean(object[,v1],w)
+            # }            
+            # for (v1 in 1:ncols){
+            #   for (v2 in v1:ncols){
+            #     for (indiv in 1:nrows){
+            #       if (v1==v2){
+            #         DEV_MAT[v1,v2]=DEV_MAT[v1,v2]+
+            #           w[indiv,1]*((object@M[indiv,v1][[1]]@s)^2+(object@M[indiv,v1][[1]]@m)^2)
+            #       }else{
+            #         DEV_MAT[v1,v2]=DEV_MAT[v1,v2]+
+            #           w[indiv,1]*dotpW(object@M[indiv,v1][[1]],object@M[indiv,v2][[1]])
+            #       }
+            #     }
+            #     if (v2>v1){
+            #       DEV_MAT[v1,v2]=DEV_MAT[v1,v2]-sum(w)*dotpW(MEANS@M[1,v1][[1]],MEANS@M[1,v2][[1]])
+            #       DEV_MAT[v2,v1]=DEV_MAT[v1,v2]
+            #     }else{
+            #       DEV_MAT[v1,v1]=DEV_MAT[v1,v1]-sum(w)*(MEANS@M[1,v1][[1]]@s^2+MEANS@M[1,v1][[1]]@m^2)
+            #     }
+            #   }
+            # }
+            # if(ncols==1){
+            #   return(as.vector(DEV_MAT))
+            # }
+            # else 
+            return(DEV_MAT)
           }
 )
 #' @rdname WH.var.covar-methods
@@ -738,13 +746,22 @@ setMethod(f="WH.correlation",signature=c(object="MatH"),
             w=w/sum(w)
             COV_MAT=WH.var.covar(object,w)
             CORR_MAT=as.matrix(COV_MAT)
-            
-            for (v1 in 1:ncols){
-              for (v2 in v1:ncols){
-                CORR_MAT[v1,v2]= COV_MAT[v1,v2]/sqrt((COV_MAT[v1,v1]*COV_MAT[v2,v2]))
-                CORR_MAT[v2,v1]=CORR_MAT[v1,v2]
-              }
-            }
+            #browser()
+            # a=Sys.time()
+            CORR_MAT=COV_MAT/(t(t(sqrt(diag(COV_MAT))))%*%sqrt(diag(COV_MAT)))
+            # b=Sys.time()
+            # print(b-a)
+            #  
+            #  for (v1 in 1:ncols){
+            #    for (v2 in v1:ncols){
+            #      CORR_MAT[v1,v2]= COV_MAT[v1,v2]/sqrt((COV_MAT[v1,v1]*COV_MAT[v2,v2]))
+            #      CORR_MAT[v2,v1]=CORR_MAT[v1,v2]
+            #    }
+            #  }
+            #  c=Sys.time()
+            #  print(c-b)
+            # # 
+            # browser()
             return(CORR_MAT)
             
           }
@@ -931,7 +948,7 @@ setMethod(f="WH.correlation2",signature=c(object1="MatH",object2="MatH"),
             w=w/sum(w)
             COV_MAT=WH.var.covar2(object1,object2,w)
             CORR_MAT=as.matrix(COV_MAT)
-            
+            #qua perde tempo
             for (v1 in 1:ncols1){
               for (v2 in 1:ncols2){
                 CORR_MAT[v1,v2]= COV_MAT[v1,v2]/sqrt(WH.var.covar(object1[,v1],w)*WH.var.covar(object2[,v2],w))
@@ -1104,10 +1121,11 @@ setMethod(f="registerMH",signature=c(object="MatH"),
             NEWMAT=new("MatH",nrows,ncols)  
             for (r in 1:nrows){
               for (c in 1:ncols){
-                x=numeric(0)
-                for (rr in 1:nr){
-                  x=c(x,compQ(object@M[r,c][[1]],commoncdf[rr]))  
-                }
+                x=compQ_vect(object@M[r,c][[1]],vp = commoncdf)
+                # x=numeric(0)
+                # for (rr in 1:nr){
+                #   x=c(x,compQ(object@M[r,c][[1]],commoncdf[rr]))  
+                # }
                 NEWMAT@M[r,c][[1]]=new("distributionH",x,commoncdf)
               }
             }

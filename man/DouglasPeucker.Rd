@@ -20,4 +20,3 @@ Ramer-Douglas-Peucker algorithm for curve fitting with a PolyLine
 \seealso{
 \code{\link[HistDAWass]{data2hist}} function
 }
-

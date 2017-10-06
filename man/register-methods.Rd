@@ -45,10 +45,6 @@ they share the same cdf values. This function is useful for computing basic stat
 ## Slot "x": [1] 7.0 8.0 8.8 10.0 15.0
 ## Slot "p": [1] 0.0 0.2 0.4  0.7  1.0
 ## ...
-
-}
-\author{
-Antonio Irpino
 }
 \references{
 Irpino, A., Lechevallier, Y. and Verde, R. (2006): \emph{Dynamic
@@ -59,5 +55,7 @@ clustering of histogram symbolic data} In: Batanjeli, V., Bock, H.H.,
 Ferligoj, A., Ziberna, A. (eds.) Data Science and Classification, IFCS 2006.
 Springer, Berlin, 185-192.
 }
+\author{
+Antonio Irpino
+}
 \keyword{distribution}
-

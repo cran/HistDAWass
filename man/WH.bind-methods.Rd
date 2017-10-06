@@ -39,4 +39,3 @@ MAT<-WH.bind(M1,M2, byrow=FALSE)
 \seealso{
 \code{\link{WH.bind.row}} for binding by row, \code{\link{WH.bind.col}} for binding by column
 }
-

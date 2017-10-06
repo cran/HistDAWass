@@ -21,4 +21,3 @@ of the histogram, if the number of bins is high the central part of the histogra
  # show the histogram
  mydist
 }
-

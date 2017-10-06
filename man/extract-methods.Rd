@@ -30,4 +30,3 @@ This method overrides the "[" operator for a  \code{matH} object.
 D=BLOOD #the BLOOD dataset
 SUB_D=BLOOD[c(1,2,5),c(1,2)]
 }
-

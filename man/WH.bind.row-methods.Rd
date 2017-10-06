@@ -29,4 +29,3 @@ M1<-BLOOD[1:3,]
 M2<-BLOOD[5:8,]
 MAT<-WH.bind.row(M1,M2)
 }
-

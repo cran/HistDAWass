@@ -31,8 +31,11 @@ of the histogrma variables after a Multiple factor analysis.
 }
 \examples{
 #Do a MultiplePCA on the BLOOD dataset
+\dontrun{
 res=WH.MultiplePCA(BLOOD,list.of.vars = c(1:3)) 
+}
 #Plot results
+\dontrun{
 WH.plot_multiple_Spanish.funs(res,axes=c(1,2),var=c(1:3))
 }
-
+}

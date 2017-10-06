@@ -19,4 +19,3 @@ histogram variables: "Y_TSC" (Total costs of a farm),  "X_Wheat" (Costs for Whea
 \author{
 Antonio Irpino, 2014-10-05
 }
-

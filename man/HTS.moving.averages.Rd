@@ -29,9 +29,9 @@ series to a histogram time series, using L2 Wasserstein distance.
 
 \item{\code{AveragedHTS}}{The smoothed HTS}
 }}
+
 \examples{
 mov.av.smoothed=HTS.moving.averages(HTS=RetHTS, k=5)
 # a show method for HTS must be implemented you can see it using
 # str(mov.av.smoothed$AveragedHTS)
 }
-

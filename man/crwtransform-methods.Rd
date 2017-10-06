@@ -33,13 +33,12 @@ mydist<-distributionH(x=c(1,2,3,10), p=c(0,0.1,0.5,1))
 ##---- Compute the cfd value for q=5 (not observed) ----
 crwtransform(mydist)
 }
-\author{
-Antonio Irpino
-}
 \references{
 Irpino, A., Verde, R., Lechevallier, Y. (2006) \emph{Dynamic
 clustering of histograms using Wasserstein metric}, In: Proceedings of
 COMPSTAT 2006, Physica-Verlag, 869-876
 }
+\author{
+Antonio Irpino
+}
 \keyword{distribution}
-

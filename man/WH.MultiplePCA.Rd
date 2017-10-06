@@ -30,4 +30,3 @@ It is a 1d (one dimension) becuse it is considered just one histogram variable.
 \details{
 It is an extension of WH.1d.PCA to the multiple case.
 }
-

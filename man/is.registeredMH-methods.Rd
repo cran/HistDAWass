@@ -42,9 +42,6 @@ bins and the same cdf.
  ## Hint: check with str(MATregistered)
 
 }
-\author{
-Antonio Irpino
-}
 \references{
 Irpino, A., Lechevallier, Y. and Verde, R. (2006): \emph{Dynamic
 clustering of histograms using Wasserstein metric} In: Rizzi, A., Vichi, M.
@@ -54,5 +51,7 @@ clustering of histogram symbolic data} In: Batanjeli, V., Bock, H.H.,
 Ferligoj, A., Ziberna, A. (eds.) Data Science and Classification, IFCS 2006.
 Springer, Berlin, 185-192.
 }
+\author{
+Antonio Irpino
+}
 \keyword{distribution}
-

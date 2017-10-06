@@ -45,6 +45,7 @@ from the centers) value at the end of the run.}
 \item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model. 
 (The higher the better)}
 }}
+
 \examples{
 results=WH_kmeans(x = BLOOD,k = 2, rep = 10,simplify = TRUE,qua = 10,standardize = TRUE)
 }
@@ -53,4 +54,3 @@ Irpino A., Verde R., Lechevallier Y. (2006). Dynamic clustering of histograms us
 metric. In: Rizzi A., Vichi M.. COMPSTAT 2006 - Advances in computational statistics. p. 869-876, 
 Heidelberg:Physica-Verlag
 }
-

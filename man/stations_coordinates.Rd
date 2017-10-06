@@ -6,7 +6,7 @@
 \title{Stations coordinates of China_Month and China_Seas datasets}
 \format{a data.frame}
 \source{
-raw data are available here: \url{http://cdiac.ornl.gov/ndps/tr055.html}. 
+raw data are available here: \url{http://cdiac.ess-dive.lbl.gov/ftp/tr055/}. 
 Climate Data Bases of the People's Republic of China 1841-1988 (TR055)
 DOI: 10.3334/CDIAC/cli.tr055
 }
@@ -16,4 +16,3 @@ A dataset containing the geographical coordinates of stations described in China
 \author{
 Antonio Irpino, 2014-10-05
 }
-

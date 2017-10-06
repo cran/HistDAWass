@@ -29,4 +29,3 @@ Returns the histogram data in the r-th row and the c-th column.
 \examples{
 get.cell.MatH(BLOOD, r=1,c=1)
 }
-

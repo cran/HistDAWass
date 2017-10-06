@@ -354,10 +354,12 @@ multiplot <- function( plotlist=NULL,..., file, cols=1, layout=NULL) {
 #' ## predict data
 #' PRED=WH.regression.two.components.predict(data = BLOOD[,2:3],parameters = pars)
 #' ## define observed data
+#' \dontrun{
 #' OBS=BLOOD[,1]
 #' plotPredVsObs(PRED,OBS,"HISTO")
 #' plotPredVsObs(PRED,OBS,"CDF")
 #' plotPredVsObs(PRED,OBS,"DENS")
+#' }
 #' @export
 plotPredVsObs<-function(PRED,OBS,type="HISTO", ncolu=2){
   #require ("vioplot")

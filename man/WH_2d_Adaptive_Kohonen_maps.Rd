@@ -91,6 +91,7 @@ from the centers) value at the end of the run.}
 \item{\code{quality}}{A number. The percentage of Sum of square deviation explained by the model. 
 (The higher the better)}
 }}
+
 \examples{
 \dontrun{
 results=WH_2d_Adaptive_Kohonen_maps(x = BLOOD,k = 2,
@@ -103,4 +104,3 @@ results=WH_2d_Adaptive_Kohonen_maps(x = BLOOD,k = 2,
 Irpino A, Verde R, De Carvalho FAT (2012). Batch self organizing maps for interval and histogram data.
 In: Proceedings of COMPSTAT 2012. p. 143-154, ISI/IASC, ISBN: 978-90-73592-32-2
 }
-
