@@ -8,7 +8,7 @@ WH_2d_Adaptive_Kohonen_maps(x, net = list(xdim = 4, ydim = 3, topo =
   c("rectangular")), kern.param = 2, TMAX = -9999, Tmin = -9999,
   niter = 30, repetitions, simplify = FALSE, qua = 10,
   standardize = FALSE, schema = 4, init.weights = "EQUAL",
-  weight.sys = "PROD", theta = 2, Wfix = FALSE)
+  weight.sys = "PROD", theta = 2, Wfix = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{x}{A MatH object (a matrix of distributionH).}
@@ -46,7 +46,11 @@ using the Wassertein based standard deviation. Use if one wants to have variable
 
 \item{theta}{a number. A parameter if \code{weight.sys='SUM'}, default is 2.}
 
-\item{Wfix}{a logical parameter (default=FALSE). If TRUE the algorithm does not use adaptive distances}
+\item{Wfix}{a logical parameter (default=FALSE). If TRUE the algorithm does not use adaptive distances.}
+
+\item{verbose}{a logical parameter (default=FALSE). If TRUE details of 
+computation are shown during the execution.
+#'}
 }
 \value{
 a list with the results of the Batch Kohonen map
@@ -94,7 +98,7 @@ from the centers) value at the end of the run.}
 
 \examples{
 \dontrun{
-results=WH_2d_Adaptive_Kohonen_maps(x = BLOOD,k = 2,
+results=WH_2d_Adaptive_Kohonen_maps(x = BLOOD,
                                    net=list(xdim=2,ydim=3,topo=c('rectangular')), 
                                    repetitions = 2,simplify = TRUE,
                                    qua = 10,standardize = TRUE)

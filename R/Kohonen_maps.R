@@ -22,8 +22,10 @@
 #' @param init.weights a string how to initialize weights: 'EQUAL' (default), all weights are the same, 
 #' @param weight.sys a string. Weights may add to one ('SUM') or their product is equal to 1 ('PROD', default).
 #' @param theta a number. A parameter if \code{weight.sys='SUM'}, default is 2.  
-#' @param Wfix a logical parameter (default=FALSE). If TRUE the algorithm does not use adaptive distances
-#'         
+#' @param Wfix a logical parameter (default=FALSE). If TRUE the algorithm does not use adaptive distances.
+#' @param verbose a logical parameter (default=FALSE). If TRUE details of 
+#' computation are shown during the execution.
+#' #'         
 #' @return a list with the results of the Batch Kohonen map
 #' @slot solution A list.Returns the best solution among the \code{repetitions}etitions, i.e. 
 #' the one having the minimum sum of squares criterion.
@@ -56,7 +58,7 @@
 #' @importFrom stats lm dist runif
 #' @examples
 #' \dontrun{
-#' results=WH_2d_Adaptive_Kohonen_maps(x = BLOOD,k = 2,
+#' results=WH_2d_Adaptive_Kohonen_maps(x = BLOOD,
 #'                                    net=list(xdim=2,ydim=3,topo=c('rectangular')), 
 #'                                    repetitions = 2,simplify = TRUE,
 #'                                    qua = 10,standardize = TRUE)
@@ -69,8 +71,13 @@ WH_2d_Adaptive_Kohonen_maps =function (x,net=list(xdim=4,ydim=3,topo=c('rectangu
                                        qua=10,
                                        standardize=FALSE, schema=4,
                                        init.weights='EQUAL',weight.sys='PROD',
-                                       theta=2,Wfix=FALSE){
+                                       theta=2,Wfix=FALSE,verbose=FALSE){
   tol=1e-10
+  if(weight.sys=='PROD') {
+    weight_sys=1
+    theta=1
+  }
+  if(weight.sys=='SUM') {weight_sys=2}
   # remember to fix TMAX e Tmin
   #require(class)#for somgrid function
   # Check initial conditions and passed parameters
@@ -95,21 +102,27 @@ WH_2d_Adaptive_Kohonen_maps =function (x,net=list(xdim=4,ydim=3,topo=c('rectangu
   if (missing(repetitions)){
     repetitions=5
   }
-  print(repetitions)
-  
+  #print(repetitions)
+  #proto=new("MatH",list(new("distributionH")),nrows=k,ncols=vars)
   for (repet in (1:repetitions)){
     
     
-    data=x@M
-    nd=nrow(data)
+    #    data=x@M
+    #    nd=nrow(data)
     #random selection of prototypes of neurons
-    init=data[sample(1L:nd,k, replace=FALSE), ,drop=FALSE]
-    proto=new("MatH")
-    proto@M=init
+    if(k<=ind){
+      proto=x[sample(1L:ind,k, replace=FALSE),]
+    }else{
+      proto=x[sample(1L:ind,k, replace=TRUE),]
+    }
+    rownames(proto@M)=paste0("Prot. ",1:k)
+    # init=data[sample(1L:nd,k, replace=FALSE), ,drop=FALSE]
+    # proto=new("MatH")
+    # proto@M=init
     nhbrdist=as.matrix(dist(MAP$pts))
     dmax=(max(MAP$pts[,1])-min(MAP$pts[,1]))^2+(max(MAP$pts[,2])-min(MAP$pts[,2]))^2
     dmax=(max(as.matrix(dist(MAP$pts))))^2
-
+    
     if (TMAX<0){
       TMAX=sqrt(-(dmax/4)/(2*log(0.99)))
     }
@@ -162,31 +175,19 @@ WH_2d_Adaptive_Kohonen_maps =function (x,net=list(xdim=4,ydim=3,topo=c('rectangu
         rownames(lambdas)=nr
         lambdas[(c(1:vars)*2-1),]=m1
         lambdas[(c(1:vars)*2),]=m2
-      }}
+      }
+    }
     #assign objects to closest neuron
     #compute adaptive distances to prototypes
     distances=array(0,dim=c(vars,k,2))
     diINDtoPROT=array(0,dim=c(ind,vars,k,2))
     # compute distances
-    ###############################
-    #computing distances
-    Dmat=array(0,c(ind,vars,k))
-    MD=matrix(0,ind,k)
-    for (cl in 1:k){
-      tmp=ComputeFast_L2_SQ_WASS_DMAT(MM,proto[cl,])
-      Dmat[,,cl]=tmp
-      MD[,cl]=MD[,cl]+apply(tmp,1,sum)
-    }
-   
+    
+    TTMMPP=c_ComputeFast_L2_SQ_WASS_DMAT(MM,proto)
+    MD=TTMMPP$Dist
+    #browser()
     Dind2Neu=MD%*%KT
-    # for (indiv in 1:ind){
-    #   for (cluster in 1:k){#s
-    #     if (Dind2Neu[indiv,cluster]==Inf) Dind2Neu[indiv,cluster]=0
-    #     for (otherclust in 1:k){#l
-    #       Dind2Neu[indiv,cluster]=Dind2Neu[indiv,cluster]+KT[otherclust,cluster]*MD[indiv,otherclust]
-    #     }
-    #   }
-    # }
+    
     #initialize matrix of memberships
     IDX=apply(Dind2Neu,1,which.min)
     memb=matrix(0,ind,k)
@@ -195,7 +196,7 @@ WH_2d_Adaptive_Kohonen_maps =function (x,net=list(xdim=4,ydim=3,topo=c('rectangu
     }
     cat(paste("---------> repetitions  ",repet,"\n"))
     ## initialize clusters and prototypes
-    proto=new("MatH",list(new("distributionH")),nrows=k,ncols=vars)
+    #proto=new("MatH",list(new("distributionH")),nrows=k,ncols=vars)
     SSQ1=matrix(0,k,vars)
     GenCrit=Inf
     ##  compute initial criterion
@@ -230,110 +231,84 @@ WH_2d_Adaptive_Kohonen_maps =function (x,net=list(xdim=4,ydim=3,topo=c('rectangu
         for (variables in 1:vars){
           if(max(kern)<1e-200){
             kern[which(kern<1e-200)]=1e-200
-           }
+          }
           M_tmp=matrix(kern/sum(kern),nrow=nrow(MM[[variables]]),ncol=ind,byrow=TRUE)
           M_tmp=M_tmp*MM[[variables]][,1:ind]
           if(length(which(is.nan(M_tmp)))>0){browser()}
-          x_tmp=apply(M_tmp,1,sum)
+          x_tmp=rowSums(M_tmp)
           p_tmp=MM[[variables]][,(ind+1)]
           proto@M[cluster,variables][[1]]@x=x_tmp
           proto@M[cluster,variables][[1]]@p=p_tmp
-          proto@M[cluster,variables][[1]]@m=meanH(proto@M[cluster,variables][[1]])
-          proto@M[cluster,variables][[1]]@s=stdH(proto@M[cluster,variables][[1]])
-          #### RICORDATI DI CALCOLARE M E S
-          #proto@M[cluster,variables][[1]]=distributionH(x_tmp,p_tmp)
+          M_S=M_STD_H(proto@M[cluster,variables][[1]])
+          proto@M[cluster,variables][[1]]@m=M_S[1]
+          proto@M[cluster,variables][[1]]@s=M_S[2]
         }
       }
       
-      #compute weights
-      if (Wfix==FALSE){
-        #first compute distances using kernel
-        #  computing distances
-        Dmat=array(0,c(ind,vars,k))
-        Dmat_M=array(0,c(ind,vars,k))
-        Dmat_V=array(0,c(ind,vars,k))
-        MD_TOT=matrix(0,vars,k)
-        MD_M=matrix(0,vars,k)
-        MD_V=matrix(0,vars,k)
-        for (cl in 1:k){
-          tmp =ComputeFast_L2_SQ_WASS_DMAT(MM,proto[cl,],DETA=TRUE)
-          if(length(which(is.nan(tmp$Dist)))>0){browser()}
-          Dmat[,,cl]=tmp$Dist
-          Dmat_M[,,cl]=tmp$DM
-          Dmat_V[,,cl]=tmp$DV
-        }
-        GRKT=0*Dmat
-        for (i1 in 1:ind){
-          for (cl in 1:k){
-            GRKT[i1,,cl]=KT[IDX[i1],cl]
-          }
-        }
-        # 
-        
-        distances=array(0,dim=c(vars,k,2))
-        distances[,,1]=apply(Dmat_M*GRKT,c(2,3),sum)
-        distances[,,2]=apply(Dmat_V*GRKT,c(2,3),sum)
-        diINDtoPROT=array(0,dim=c(ind,vars,k,2))
-        for (cluster in 1:k){
-          diINDtoPROT[,,cluster,1]=Dmat_M[,,cluster]
-          diINDtoPROT[,,cluster,2]=Dmat_V[,,cluster]
-        }
-        #################################################################### DONE 
-        #Weights computation
-        
-        lambdas=ADA_F_DIST(distances,k,vars,ind,schema,weight.sys,theta,m=1)
-      }
-      #assign data to neurons
-      #assign objects to closest neuron
-      #compute adaptive distances to prototypes
+      
+      #first compute distances using kernel
+      #  computing distances
+      
+      ###########    NEW part
+      tmpD=c_ComputeFast_L2_SQ_WASS_DMAT(MM,proto)
+      
+      GRKT=KT[IDX,1:k]
       distances=array(0,dim=c(vars,k,2))
+      for (j in 1:vars){
+        distances[j,,1]=distances[j,,1]+colSums(tmpD$DET[[j]]$DM*GRKT)
+        distances[j,,2]=distances[j,,2]+colSums(tmpD$DET[[j]]$DV*GRKT)
+      }
+      
       diINDtoPROT=array(0,dim=c(ind,vars,k,2))
-      ####################
-      for (cluster in 1:k){
-        for (variables in (1:vars)){
-          for (indiv in 1:ind){
-            if (schema==1){#one weight for one variable
-              tmpD=Dmat_M[indiv,variables,cluster]
-              distances[variables,cluster,1]=distances[variables,cluster,1]+tmpD*lambdas[(variables*2-1),cluster]
-              diINDtoPROT[indiv,variables,cluster,1]=tmpD
-            }
-            if (schema==2|schema==5){#two weights for the two components for each variable
-              tmpD=Dmat_M[indiv,variables,cluster]
-              tmpD_mean=Dmat_M[indiv,variables,cluster]
-              tmpD_centered=Dmat_V[indiv,variables,cluster]
-              distances[variables,cluster,1]=distances[variables,cluster,1]+tmpD_mean*lambdas[(variables*2-1),cluster]
-              distances[variables,cluster,2]=distances[variables,cluster,2]+tmpD_centered*lambdas[(variables*2),cluster]
-              diINDtoPROT[indiv,variables,cluster,1]=tmpD_mean
-              diINDtoPROT[indiv,variables,cluster,2]=tmpD_centered
-            }
-            if (schema==3){#a weight for one variable and for each cluster
-              tmpD=Dmat_M[indiv,variables,cluster]
-              distances[variables,cluster,1]=distances[variables,cluster,1]+tmpD*lambdas[(variables*2-1),cluster]
-              diINDtoPROT[indiv,variables,cluster,1]=tmpD
-            }
-            if (schema==4|schema==6){#two weights for the two components for each variable and each cluster
-              tmpD=Dmat_M[indiv,variables,cluster]
-              tmpD_mean=Dmat_M[indiv,variables,cluster]
-              tmpD_centered=Dmat_V[indiv,variables,cluster]
-              distances[variables,cluster,1]=distances[variables,cluster,1]+tmpD_mean*lambdas[(variables*2-1),cluster]
-              distances[variables,cluster,2]=distances[variables,cluster,2]+tmpD_centered*lambdas[(variables*2),cluster]
-              diINDtoPROT[indiv,variables,cluster,1]=tmpD_mean
-              diINDtoPROT[indiv,variables,cluster,2]=tmpD_centered
-            }
+      diINDtoPROT2=array(0,dim=c(ind,vars,k,2))
+      if (Wfix==FALSE){#Weights computation
+        # S2.2) Weights computation
+        #NEW
+        lambdas=c_ADA_F_WHEIGHT(list(as.matrix(distances[,,1]),as.matrix(distances[,,2])),
+                                k, vars, ind, schema, weight_sys,  theta, 1)
+        wM=(lambdas[((1:vars)*2-1),])^theta
+        wV=(lambdas[(1:vars)*2,])^theta
+        
+        #assign data to neurons
+        ####################
+        if (schema==1|schema==3){
+          ####################
+          for (variables in (1:vars)){
+            tmpM=matrix(wM[variables,],ind,k,byrow = TRUE)
+            diINDtoPROT[,variables,,1]=tmpD$DET[[variables]]$D*tmpM
+          }
+          ###############
+        }else{
+          for (variables in (1:vars)){
+            tmpM=matrix(wM[variables,],ind,k,byrow = TRUE)
+            diINDtoPROT[,variables,,1]=tmpD$DET[[variables]]$DM*tmpM
+            tmpM=matrix(wV[variables,],ind,k,byrow = TRUE)
+            diINDtoPROT[,variables,,2]=tmpD$DET[[variables]]$DV*tmpM
+          }
+          
+        }
+      }
+      if (Wfix==TRUE){
+        
+        ####################
+        if (schema==1|schema==3){#one weight for one variable
+          for (variables in (1:vars)){
+            tmpM=matrix(wM[variables,],ind,k,byrow = TRUE)
+            diINDtoPROT[,variables,,1]=tmpD$DET[[variables]]$D
+          }
+        }else{
+          for (variables in (1:vars)){
+            diINDtoPROT[,variables,,1]=tmpD$DET[[variables]]$DM
+            
+            diINDtoPROT[,variables,,2]=tmpD$DET[[variables]]$DV
           }
         }
       }
+  #    browser()
       tmp=apply(diINDtoPROT,c(1,3),sum)
-     # tmp[which(is.na(tmp))]=1e100
+      # tmp[which(is.na(tmp))]=1e100
       Dind2Neu=tmp%*%KT#matrix(Inf,ind,k)
-      # for (indiv in 1:ind){
-      #   for (cluster in 1:k){#s
-      #     if (Dind2Neu[indiv,cluster]==Inf) Dind2Neu[indiv,cluster]=0
-      #     for (otherclust in 1:k){#l
-      #       Dind2Neu[indiv,cluster]=Dind2Neu[indiv,cluster]+KT[otherclust,cluster]*sum(diINDtoPROT[indiv,,otherclust,])
-      #     }
-      #   }
-      # }
+      
       #recompute criterion
       IDX=apply(Dind2Neu,1,which.min)
       OldCrit=GenCrit
@@ -342,12 +317,12 @@ WH_2d_Adaptive_Kohonen_maps =function (x,net=list(xdim=4,ydim=3,topo=c('rectangu
         GenCrit=GenCrit+sum(Dind2Neu[individual, IDX[individual]])
       }
       
-      cat(paste(t,GenCrit, "\n", sep="---->"))
+      if (verbose) {cat(paste(t,GenCrit, "\n", sep="---->"))}
       if (is.na(GenCrit)){
         browser()
         print('A GREAT PROBLEM HERE!')
       }
-      print(print_map(MAP,IDX))
+      if (verbose) {print(print_map(MAP,IDX))}
       #print(TT)
       #print(max(KT))
       #print(min(KT[which(KT>1e-16)]))
@@ -362,8 +337,9 @@ WH_2d_Adaptive_Kohonen_maps =function (x,net=list(xdim=4,ydim=3,topo=c('rectangu
     #plot(proto,type="DENS")
   }
   FM=solutions[[which.min(criteria)]]$MAP
-    FIDX=solutions[[which.min(criteria)]]$IDX
-  print_map(FM,FIDX,gr=TRUE)
+  FIDX=solutions[[which.min(criteria)]]$IDX
+ # if (verbose){print_map(FM,FIDX,gr=TRUE)}
+  print(print_map(FM,FIDX,gr=TRUE))
   #print(dmax)
   #print(TMAX)
   #print(Tmin)
@@ -476,9 +452,9 @@ print_map=function(MAP,IDX,gr=FALSE){
     MAPPA[mappa[i,1],mappa[i,2]]=mappa[i,3]
   }
   if (gr){
-  plot(MAP)
-  text(MAP$pts[,1],MAP$pts[,2],as.character(c(1:nrow(MAP$pts))),pos=2,cex=0.7)
-  text(MAP$pts[which(mappa[,3]>0),1],MAP$pts[which(mappa[,3]>0),2],as.character(mappa[which(mappa[,3]>0),3]),pos=1,cex=0.9,col='BLUE')
+    plot(MAP)
+    text(MAP$pts[,1],MAP$pts[,2],as.character(c(1:nrow(MAP$pts))),pos=2,cex=0.7)
+    text(MAP$pts[which(mappa[,3]>0),1],MAP$pts[which(mappa[,3]>0),2],as.character(mappa[which(mappa[,3]>0),3]),pos=1,cex=0.9,col='BLUE')
   }
   return(MAPPA)
 }

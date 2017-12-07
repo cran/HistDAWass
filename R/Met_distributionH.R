@@ -521,7 +521,7 @@ setGeneric("register", function(object1,object2) standardGeneric("register"))
 # The REGISTER function ----
 setMethod(f="register",signature=c(object1="distributionH",object2="distributionH"),
           function(object1,object2){
-            res=REGISTER3(object1,object2)
+            res=REGISTER2(object1,object2)
             return(res)
             # DIG=14
             # #if (!identical(object1@p,object2@p)){
