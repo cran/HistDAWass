@@ -293,7 +293,7 @@ WH_2d_Adaptive_Kohonen_maps =function (x,net=list(xdim=4,ydim=3,topo=c('rectangu
         ####################
         if (schema==1|schema==3){#one weight for one variable
           for (variables in (1:vars)){
-            tmpM=matrix(wM[variables,],ind,k,byrow = TRUE)
+            tmpM=matrix(1,ind,k,byrow = TRUE)
             diINDtoPROT[,variables,,1]=tmpD$DET[[variables]]$D
           }
         }else{

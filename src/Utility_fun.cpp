@@ -394,7 +394,7 @@ List c_DISTA_M(List MM, S4 Protos){// computes distances wrt prototypes
   int v,pr,ind;
   double dist;
   
-  NumericMatrix GG=MM[1];
+  NumericMatrix GG=MM[0];
   NumericMatrix resu((GG.ncol()-1),npro);
   for(v=0;v<vars;v++){
     NumericMatrix M=MM[v];
@@ -508,8 +508,8 @@ List c_Compute_M_from_MM(NumericMatrix subMM){
 NumericMatrix c_Fast_D_Mat(List MM){
   int vars=MM.size();
   int v,ind,ind2,Nind;
-  Nind=(as<NumericMatrix>(MM[1])).ncol()-1;
-  NumericMatrix M=MM[1];
+  Nind=(as<NumericMatrix>(MM[0])).ncol()-1;
+  NumericMatrix M=MM[0];
   NumericMatrix D(Nind,Nind);
   for(v=0;v<vars;v++){
     NumericMatrix M=MM[v];

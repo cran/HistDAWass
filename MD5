@@ -1,11 +1,11 @@
-a3084073a9b5bddcff3c9bf9c89f47e7 *DESCRIPTION
+d16baf445412ff8571a535fea6d71e1e *DESCRIPTION
 c56138cd7b9bd5e2873d7e30d0296158 *NAMESPACE
 93fed78dfe53c948d9fc72d94c656a5e *R/All_classes.R
 f41ee8ac7d7cd8d44494338761e83347 *R/For_Rccp_int.R
 0e2f54280f64692b6aea7e54e9f5dc77 *R/Fuzzy_cmeans.R
 4a0a7c0f65aa960195255804f87ab7e5 *R/H_time_series.R
 05a6e9e92c3cf5e9947e6a2a458976b9 *R/HistDAWass-package.R
-08e27b5375573bdce287046cd0e1a052 *R/Kohonen_maps.R
+85dfc1d574903772c2acea9071219280 *R/Kohonen_maps.R
 1d395f9638888bb610e8495c4d6d1fa7 *R/Met_HTS.R
 0c1d881a3e7bc9c8d2ed05737dd63f38 *R/Met_MatH.R
 3b1fce3fd50f8bec7cc7fcb5f9772e6b *R/Met_distributionH.R
@@ -109,5 +109,5 @@ df1725c35969b560a2b1bdf79a88d336 *man/stdH-methods.Rd
 26f9208df016748203c6728fe7bcf39c *src/Makevars
 f5d4c313ab201e5eb486d1ecbd92682d *src/Makevars.win
 e074d278a5b83527dff32863f09ddad2 *src/RcppExports.cpp
-c19b5d6d9559918985ff78e6ec2c8904 *src/Utility_fun.cpp
+996d76adbff95fc08265a605a9f810b9 *src/Utility_fun.cpp
 d7794685b4f4644052ffced4064201b3 *src/init.cpp
