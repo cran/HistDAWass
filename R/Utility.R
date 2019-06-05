@@ -671,4 +671,17 @@ MEAN_VA=function(MAT,wei){
   
 res=MEDIA_V(MAT, wei)
 return(res)
+}
+
+# an alternative to table
+Table2=function(x,N, full=TRUE){
+  howm=rep(0,N)
+  names(howm)=paste0(c(1:N))
+  for (i in 1:N){
+    howm[i]=length(which(x==i))
   }
+  if (full){
+    return(howm)}else{
+      return(howm[which(howm>0)])
+    }
+}

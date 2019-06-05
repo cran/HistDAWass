@@ -84,8 +84,23 @@ List REGISTER2(S4 a, S4 b) {
   y=clone(b);
   int DIG=14;
   int i;
+  NumericVector p1=x.slot("p");
+  NumericVector p2=y.slot("p");
   
   NumericVector tmp, tmp_p;
+  int doit=0;
+  if ((abs(p1.size()-p2.size())>0)){
+    doit=1;
+  }else{
+    if (sum(abs(p1-p2))>1e-20) {doit=1;}
+  }
+  // Rcout<<"p1 "<<p1.size()<<"\n";
+  // Rcout<<"p2 "<<p2.size()<<"\n";
+  // Rcout<<"sab "<<p2.size()<<"\n";
+  // Rcout<<" "<<doit<<"\n";
+  // Rcout<<"doit "<<doit<<"\n";
+      // Rcout<<"doit "<<doit<<"\n";
+  if (doit>0){
   ///////////////////////////////////////////////////////////
   // check if there are empty bins in x
   tmp_p=x.slot("p");
@@ -109,7 +124,7 @@ List REGISTER2(S4 a, S4 b) {
   tmp_p=diff(tmp_p);
   
   if (min(tmp_p)<powf(0.1,DIG)){
-    Rcout<<"\n  zero weighted bin!! \n";
+    //Rcout<<"\n  zero weighted bin!! \n";
     tmp_p[tmp_p<powf(0.1,DIG)]=powf(0.1,DIG);
     tmp_p=tmp_p/(sum(as<NumericVector>(tmp_p)));
     NumericVector tt=cumsum(tmp_p);
@@ -151,6 +166,7 @@ List REGISTER2(S4 a, S4 b) {
     tres=COMP_Q_VECT(y.slot("x"),t2,ciccio);
     fintrex=concatenate_and_sort_not_unique(y.slot("x"),tres);
     y.slot("x")=fintrex;
+  }
   }
   List My(3);
   My[0]=(as<S4>(x));
@@ -393,7 +409,6 @@ List c_DISTA_M(List MM, S4 Protos){// computes distances wrt prototypes
   int vars=MM.size();
   int v,pr,ind;
   double dist;
-  
   NumericMatrix GG=MM[0];
   NumericMatrix resu((GG.ncol()-1),npro);
   for(v=0;v<vars;v++){
@@ -405,17 +420,15 @@ List c_DISTA_M(List MM, S4 Protos){// computes distances wrt prototypes
         TMP(_,0)=M(_,ind);
         TMP(_,1)=as<NumericVector>(prok.slot("x"));
         TMP(_,2)=M(_,(M.ncol()-1));
-        
         dist=c_MM_L2_SQ_WASS_D(TMP);
         resu(ind,pr)=resu(ind,pr)+dist;
-        //       
+               
       }
     }
     
   }
   //
   NumericVector wm(GG.ncol()-1);
-  //NumericMatrix resu;
   for(ind=0;ind<(GG.ncol()-1);ind++){
     wm[ind]=which_min(resu(ind,_))+1;
   }
@@ -1207,16 +1220,25 @@ List c_COMP_SEVERAL_MEANS_M_D(S4 y, NumericMatrix wM, NumericMatrix wDis){
 // [[Rcpp::export]]
 List c_Wass_Q_dist_DET(S4 o1, S4 o2){
   List obj;
+  
+  NumericVector p1=o1.slot("p");
+  NumericVector p2=o2.slot("p");
+  NumericVector dom1,dom2,w,cen1,cen2,rad1,rad2,p;
+   if ((p1.size()==p2.size()) && (sum(abs(p1-p2))<1e-20)){
+     dom1=o1.slot("x");
+     dom2=o2.slot("x");
+     p=p1;
+   }else{
   obj=as<List>(REGISTER2(o1,o2));
   
   //  Rcout<<"\n ok ";
   NumericMatrix M=obj[2];
-  NumericVector dom1,dom2,w,cen1,cen2,rad1,rad2,p;
   //S4 on1=obj[0];
   //S4 on2=obj[1];
   dom1=M(_,0);
   dom2=M(_,1);
   p=M(_,2);
+   }
   //dom1=on1.slot("x");
   //dom2=on2.slot("x");
   //w=diff(as<NumericVector>(dom2.slot("p")));
@@ -1388,9 +1410,19 @@ NumericMatrix c_ADA_F_WHEIGHT(List distances,int k, int vars, int ind, int schem
   NumericMatrix lambdas((2*vars),k);
   NumericMatrix DiM=distances[0];
   NumericMatrix DiV=distances[1];
+  int j,clu;
+  double sr;
+  for (clu=0;clu<k;clu++){
+    sr=sum(DiM(_,clu));
+    if (sr<1e-20){DiM(_,clu)=DiM(_,clu)+1e-20;}
+    sr=sum(DiV(_,clu));
+    if (sr<1e-20){DiV(_,clu)=DiV(_,clu)+1e-20;}
+  }
+  
+  
   double num,denom;
   
-  int j,clu;
+  
   for (j=0;j<vars;j++){
     for (clu=0;clu<k;clu++){
       //product
@@ -2087,4 +2119,109 @@ double c_WH_ADPT_FCMEANS_SSQ_FAST_NEW(List DM,List DV, NumericMatrix memb,double
     }
   }
   return SSQ;
+}
+
+// [[Rcpp::export]]
+double c_dotpW(S4 o1,S4 o2){
+  double res=0;
+  
+  NumericVector p1=o1.slot("p");
+  NumericVector p2=o2.slot("p");
+  NumericVector dom1,dom2,w,cen1,cen2,rad1,rad2,p;
+  if ((p1.size()==p2.size()) && (sum(abs(p1-p2))<1e-20)){
+    dom1=o1.slot("x");
+    dom2=o2.slot("x");
+    p=p1;
+  }else{
+  List obj;
+  obj=as<List>(REGISTER2(o1,o2));
+    
+    //  Rcout<<"\n ok ";
+    NumericMatrix M=obj[2];
+    
+    //S4 on1=obj[0];
+    //S4 on2=obj[1];
+    dom1=M(_,0);
+    dom2=M(_,1);
+    p=M(_,2);
+  }
+    //dom1=on1.slot("x");
+    //dom2=on2.slot("x");
+    //w=diff(as<NumericVector>(dom2.slot("p")));
+    w=diff(p);
+    rad1=diff(dom1)*0.5;
+    rad2=diff(dom2)*0.5;
+    cen1=(dom1[Range(0,(dom1.size()-2))]+dom1[Range(1,(dom1.size()-1))])*0.5;
+    cen2=(dom2[Range(0,(dom1.size()-2))]+dom2[Range(1,(dom1.size()-1))])*0.5;
+    
+    res=sum(w*((cen1*cen2)+ 1/3.0*(rad1*rad2)));
+  
+  return res;
+  
+}
+
+// [[Rcpp::export]]
+S4 c_PROTO_KOHONEN(S4 proto,int k, int ind, 
+                   List MM,int vars,
+                   NumericMatrix KT, NumericVector IDX){
+  S4 x=clone(proto);
+  ListMatrix x_cont=x.slot("M");
+  
+  int i,v,clu;
+  for (clu=0;clu<k;clu++){
+    NumericVector kern(ind);
+    for (i=0;i<ind;i++){
+      kern[i]=KT((IDX[i]-1),clu);
+      if (kern[i]<1e-30) kern[i]=0;
+    }
+    double sk=sum(kern);
+    if (sk>1e-30){
+      kern=kern/sum(kern);
+    for (v=0;v<vars;v++){
+      NumericMatrix MM_tmp=MM[v];
+      NumericVector p=MM_tmp(_,ind);
+      NumericVector dm(MM_tmp.nrow());
+      for (int cc=0;cc<ind;cc++){
+        dm=dm+kern[cc]*MM_tmp(_,cc);
+      }
+      S4 tmp("distributionH");
+      tmp.slot("x")=dm;
+      tmp.slot("p")=p;
+      double m1,s1;
+      NumericVector TMPR=M_STD_H(tmp);
+      m1=TMPR[0];
+      s1=TMPR[1];
+      tmp.slot("m")=m1;
+      tmp.slot("s")=s1;
+      x_cont(clu,v)=tmp;
+      
+    }
+    }
+  }
+  x.slot("M")=x_cont;
+  return x;
+}
+
+// [[Rcpp::export]]
+List c_Wass_Q_dist_2P(S4 o1, S4 o2){
+  List obj;
+  
+  double m1,m2,s1,s2;
+  m1=o1.slot("m");
+  m2=o2.slot("m");
+  s1=o1.slot("s");
+  s2=o2.slot("s");
+  
+  
+  double dm2,ditot,cp;
+  
+  dm2=(m1-m2)*(m1-m2);
+  cp=c_dotpW(o1,o2);
+  
+  
+  ditot=s1*s1+m1*m1+s2*s2+m2*m2-2*cp;
+
+  List resu;resu["D"]=ditot;resu["Dm"]=dm2;resu["Dv"]=(ditot-dm2);
+
+  return resu;
 }

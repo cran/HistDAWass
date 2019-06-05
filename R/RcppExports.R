@@ -165,3 +165,15 @@ c_WH_ADPT_FCMEANS_SSQ_FAST_NEW <- function(DM, DV, memb, m, lambdas, theta) {
     .Call('_HistDAWass_c_WH_ADPT_FCMEANS_SSQ_FAST_NEW', PACKAGE = 'HistDAWass', DM, DV, memb, m, lambdas, theta)
 }
 
+c_dotpW <- function(o1, o2) {
+    .Call('_HistDAWass_c_dotpW', PACKAGE = 'HistDAWass', o1, o2)
+}
+
+c_PROTO_KOHONEN <- function(proto, k, ind, MM, vars, KT, IDX) {
+    .Call('_HistDAWass_c_PROTO_KOHONEN', PACKAGE = 'HistDAWass', proto, k, ind, MM, vars, KT, IDX)
+}
+
+c_Wass_Q_dist_2P <- function(o1, o2) {
+    .Call('_HistDAWass_c_Wass_Q_dist_2P', PACKAGE = 'HistDAWass', o1, o2)
+}
+

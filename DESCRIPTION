@@ -1,8 +1,8 @@
 Package: HistDAWass
 Type: Package
 Title: Histogram-Valued Data Analysis
-Version: 1.0.1
-Date: 2018-03-20
+Version: 1.0.3
+Date: 2019-06-04
 Authors@R: c(person("Antonio", "Irpino", role = c("aut", "cre"),
   	     email = "antonio.irpino@unicampania.it"))
 Author: Antonio Irpino [aut, cre]
@@ -25,9 +25,10 @@ Collate: 'For_Rccp_int.R' 'All_classes.R' 'RcppExports.R' 'Utility.R'
         'H_time_series.R' 'HistDAWass-package.R' 'Kohonen_maps.R'
         'principal_components.R' 'regression.R'
         'unsuperv_classification.R' 'Plotting_with_ggplot.R'
-RoxygenNote: 6.0.1
+Encoding: UTF-8
+RoxygenNote: 6.1.1
 NeedsCompilation: yes
 LinkingTo: Rcpp,RcppArmadillo
-Packaged: 2018-03-20 15:59:27 UTC; Antonio B1
+Packaged: 2019-06-04 10:16:08 UTC; AntonioYOGA
 Repository: CRAN
-Date/Publication: 2018-03-20 16:23:27 UTC
+Date/Publication: 2019-06-05 13:40:03 UTC

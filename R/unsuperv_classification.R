@@ -208,7 +208,9 @@ WH_hclust =function (x,
   x=tmp$x
   
   ##compute distance matrix
-  if (distance=="WDIST"){d=sqrt(c_Fast_D_Mat(MM))}
+  if (distance=="WDIST"){
+    d=sqrt(c_Fast_D_Mat(MM))
+    }
   
   rownames(d)=rownames(x@M)
   colnames(d)=rownames(x@M)

@@ -64,30 +64,48 @@ plot.gg<-function (x,  type="HISTO",col="green",border="black")
   }
   if (type=="HBOXPLOT"){
     qua=c(0,0.25,0.5,0.75,1)
-    xn=c(0,0,0,0,0)
+    df = data.frame(ymin = 0, lower = 0, middle = 0, upper = 0, ymax = 0)
     for (i in 1:5){
-      xn[i]=compQ(x,qua[i])
+      df[[i]]=compQ(x,qua[i])
     }
-    df=data.frame(x=xn)
-    p=with(df,ggplot(df, aes(x=factor(0), ymin = x[1], lower = x[2], middle =x[3], upper =x[4], ymax =x[5]))+
-             geom_boxplot(stat = "identity", fill=col, size=1, colour=border)+
-             ylab(xlabel) +xlab("")+
-             ggtitle("Horizontal Boxplot")+coord_flip()
+    df$x = factor(0)
+    
+    p=with(df,ggplot(df, aes_all(names(df)))+
+      geom_boxplot(stat = "identity", fill=col, size=1, colour=border)+
+      ylab(xlabel) +xlab("")+
+      ggtitle("Horizontal Boxplot")+coord_flip()
     )
+    # xn=c(0,0,0,0,0)
+    # for (i in 1:5){
+    #   xn[i]=compQ(x,qua[i])
+    # }
+    # df=data.frame(x=xn)
+    # p=with(df,ggplot(df, aes(x=factor(0), ymin = x[1], lower = x[2], middle =x[3], upper =x[4], ymax =x[5]))+
+    #          geom_boxplot(stat = "identity", fill=col, size=1, colour=border)+
+    #          ylab(xlabel) +xlab("")+
+    #          ggtitle("Horizontal Boxplot")+coord_flip()
+    # )
     
   }
   if (type=="VBOXPLOT"){
     qua=c(0,0.25,0.5,0.75,1)
-    xn=c(0,0,0,0,0)
+    df = data.frame(ymin = 0, lower = 0, middle = 0, upper = 0, ymax = 0)
     for (i in 1:5){
-      xn[i]=compQ(x,qua[i])
+      df[[i]]=compQ(x,qua[i])
     }
-    df=data.frame(x=xn)
-    p=with(df,ggplot(df, aes(x=factor(0), ymin = x[1], lower = x[2], middle =x[3], upper =x[4], ymax =x[5]))+
-             geom_boxplot(stat = "identity", fill=col, size=1, colour=border)+
-             ylab("x") +xlab(xlabel)+
-             ggtitle("Vertical Boxplot")
+    df$x = factor(0)
+    
+    p=with(df,ggplot(df, aes_all(names(df)))+
+      geom_boxplot(stat = "identity", fill=col, size=1, colour=border)+
+        ylab("x") +xlab(xlabel)+
+        ggtitle("Vertical Boxplot")
     )
+    
+    # p=with(df,ggplot(df, aes(x=factor(0), ymin = x[1], lower = x[2], middle =x[3], upper =x[4], ymax =x[5]))+
+    #          geom_boxplot(stat = "identity", fill=col, size=1, colour=border)+
+    #          ylab("x") +xlab(xlabel)+
+    #          ggtitle("Vertical Boxplot")
+    #)
   }
   
   return(p)

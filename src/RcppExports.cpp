@@ -543,3 +543,44 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// c_dotpW
+double c_dotpW(S4 o1, S4 o2);
+RcppExport SEXP _HistDAWass_c_dotpW(SEXP o1SEXP, SEXP o2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type o1(o1SEXP);
+    Rcpp::traits::input_parameter< S4 >::type o2(o2SEXP);
+    rcpp_result_gen = Rcpp::wrap(c_dotpW(o1, o2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// c_PROTO_KOHONEN
+S4 c_PROTO_KOHONEN(S4 proto, int k, int ind, List MM, int vars, NumericMatrix KT, NumericVector IDX);
+RcppExport SEXP _HistDAWass_c_PROTO_KOHONEN(SEXP protoSEXP, SEXP kSEXP, SEXP indSEXP, SEXP MMSEXP, SEXP varsSEXP, SEXP KTSEXP, SEXP IDXSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type proto(protoSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type ind(indSEXP);
+    Rcpp::traits::input_parameter< List >::type MM(MMSEXP);
+    Rcpp::traits::input_parameter< int >::type vars(varsSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type KT(KTSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type IDX(IDXSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_PROTO_KOHONEN(proto, k, ind, MM, vars, KT, IDX));
+    return rcpp_result_gen;
+END_RCPP
+}
+// c_Wass_Q_dist_2P
+List c_Wass_Q_dist_2P(S4 o1, S4 o2);
+RcppExport SEXP _HistDAWass_c_Wass_Q_dist_2P(SEXP o1SEXP, SEXP o2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type o1(o1SEXP);
+    Rcpp::traits::input_parameter< S4 >::type o2(o2SEXP);
+    rcpp_result_gen = Rcpp::wrap(c_Wass_Q_dist_2P(o1, o2));
+    return rcpp_result_gen;
+END_RCPP
+}
