@@ -1,5 +1,5 @@
-ad2d2f1fb7c0aa5588da7fdec7ff10ca *DESCRIPTION
-c56138cd7b9bd5e2873d7e30d0296158 *NAMESPACE
+66c9f5fe95ccc057cd7d0491e76ab3ee *DESCRIPTION
+0157feed3f9ba40f520aea8dde2ebd87 *NAMESPACE
 d224459e609579df3cadb2e8be66cdbc *R/All_classes.R
 aaf3e8da7b4d9951c24ef392277dbfef *R/For_Rccp_int.R
 199a99ca2fdc237e84e90d01eaf2bc1b *R/Fuzzy_cmeans.R
@@ -9,15 +9,15 @@ b1c75e531a37c34b16aa55ae9685bebe *R/HistDAWass-package.R
 1facfe37a414269140425788823302e5 *R/Met_HTS.R
 70885723e8c75a8987b02829b28659cb *R/Met_MatH.R
 afa46d46832d6f8d6bc1f287e1ef7833 *R/Met_distributionH.R
-178f2434cb16f50b1a284d1368184981 *R/Plotting_with_ggplot.R
+b508bf09920a35059f4ec5a961172a9d *R/Plotting_with_ggplot.R
 f441a6ba115fe32547aad28cbf099e85 *R/RcppExports.R
 9716ffe3518e8167fb880e74a53ff20d *R/Utility.R
 5b687676f3eabb38587c1359466d6304 *R/principal_components.R
 ed79f74723e88d6c9839f036ff395060 *R/regression.R
-a70c24e8b1677ded9fa2c222326fe886 *R/unsuperv_classification.R
-6c20afb07a36a3cf9acddae8a2851c7c *README.md
-f41db4b25872e3bb99e939a3866b0ee0 *build/partial.rdb
-9939b0f019f8b870a4adc768a62559a1 *data/HData.RData
+3457ba6acc0c39d6991003ca8c039e38 *R/unsuperv_classification.R
+be0bdba75c4e20bfa72646d2af69ce3e *README.md
+ecfc89fa1317bcaf5e829abf067200d0 *build/partial.rdb
+a8bce0573352e267657a0d00f53f0a8f *data/HData.RData
 c000810e0dd854a92228188b14f2598e *man/Age_Pyramids_2014.Rd
 1340a2a53cfade84cb3cfada4ec45c80 *man/Agronomique.Rd
 6522ce7812c449c6b279b1e4287439ff *man/BLOOD.Rd
@@ -60,6 +60,7 @@ b9f8517cc82f9f871d8898427a071268 *man/WH.var.covar2-methods.Rd
 a7a996f50c0eacfe9a82f3d9e75b580e *man/WH.vec.sum-methods.Rd
 b924d0f5b0463f8728598e026fd0e68f *man/WH_2d_Adaptive_Kohonen_maps.Rd
 f425663c6a7a5b753f8b826a98dff7ab *man/WH_2d_Kohonen_maps.Rd
+12c5c41fc3d8f88cb4daeabaa7dde875 *man/WH_MAT_DIST.Rd
 ae8c4ee4da4a2af8b2342cdef5cb6d29 *man/WH_adaptive.kmeans.Rd
 288a70533bcd7c300ebbcbb88891238b *man/WH_adaptive_fcmeans.Rd
 f04a35f71bbd90a3f6330f388af8d63b *man/WH_fcmeans.Rd
