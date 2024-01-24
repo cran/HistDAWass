@@ -1,8 +1,8 @@
 Package: HistDAWass
 Type: Package
 Title: Histogram-Valued Data Analysis
-Version: 1.0.7
-Date: 2022-09-26
+Version: 1.0.8
+Date: 2024-01-24
 Authors@R: c(person(given="Antonio",
                 family= "Irpino", 
                 role = c("aut", "cre"),
@@ -19,7 +19,7 @@ Description: In the framework of Symbolic Data Analysis, a relatively new
     histogram time series. An introducing paper is Irpino A. Verde R. (2015) <doi: 10.1007/s11634-014-0176-4>.
 License: GPL (>= 2)
 Imports: graphics, class, FactoMineR, ggplot2, ggridges, grid,
-        histogram, grDevices, stats, utils, Rcpp, plyr
+        histogram, grDevices, stats, utils, Rcpp
 Depends: R(>= 3.1), methods
 LazyData: true
 Collate: 'For_Rccp_int.R' 'All_classes.R' 'RcppExports.R' 'Utility.R'
@@ -28,10 +28,10 @@ Collate: 'For_Rccp_int.R' 'All_classes.R' 'RcppExports.R' 'Utility.R'
         'principal_components.R' 'regression.R'
         'unsuperv_classification.R' 'Plotting_with_ggplot.R'
 Encoding: UTF-8
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.1
 NeedsCompilation: yes
 LinkingTo: Rcpp,RcppArmadillo
-Packaged: 2022-09-26 08:34:17 UTC; AntonioYOGA
+Packaged: 2024-01-24 17:14:46 UTC; antonio
 Author: Antonio Irpino [aut, cre] (<https://orcid.org/0000-0001-9293-7180>)
 Repository: CRAN
-Date/Publication: 2022-09-26 09:40:02 UTC
+Date/Publication: 2024-01-24 17:42:31 UTC
