@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>3. Clustering histogram data: k-means and fuzzy c-means</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">3. Clustering histogram data: k-means and
+fuzzy c-means</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(HistDAWass)</span></code></pre></div>
+<p>The clustering methods of HistDAWass group the individuals (rows) of
+a <code>MatH</code> object using the L2 Wasserstein distance between
+histograms. The prototype of each cluster is itself a histogram for each
+variable (the Wasserstein mean of the histograms of the cluster).</p>
+<p>We use the <code>OzoneFull</code> data: 78 stations in the USA
+described by the histograms of four variables.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">get.MatH.main.info</span>(OzoneFull)<span class="sc">$</span>varnames</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Ozone.Conc.ppb&quot;         &quot;Temperature.C&quot;          &quot;Solar.Radiation.WattM2&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt; [4] &quot;Wind.Speed.mSec&quot;</span></span></code></pre></div>
+<p>Two options are common to all the methods:</p>
+<ul>
+<li><code>standardize = TRUE</code> standardises each variable by its
+Wasserstein standard deviation: useful when the variables have different
+units, as here;</li>
+<li><code>simplify = TRUE</code> approximates each histogram with
+<code>qua</code> equally spaced quantiles: much faster for large
+datasets, with an approximation error that decreases with
+<code>qua</code> (see the vignette on basic statistics).</li>
+</ul>
+<p>The algorithms start from random partitions, so we fix the seed and
+repeat each algorithm <code>rep</code> times, keeping the best
+solution.</p>
+<div id="k-means" class="section level2">
+<h2>K-means</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">WH_kmeans</span>(OzoneFull, <span class="at">k =</span> <span class="dv">3</span>, <span class="at">rep =</span> <span class="dv">5</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>                <span class="at">simplify =</span> <span class="cn">TRUE</span>, <span class="at">qua =</span> <span class="dv">20</span>, <span class="at">standardize =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="fu">names</span>(km<span class="sc">$</span>solution)</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;IDX&quot;         &quot;cardinality&quot; &quot;centers&quot;     &quot;Crit&quot;</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>km<span class="sc">$</span>solution<span class="sc">$</span>cardinality</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; IDX</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; Cl.1 Cl.2 Cl.3 </span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt;   31   13   34</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>km<span class="sc">$</span>quality   <span class="co"># proportion of the total sum of squares explained by the partition</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; [1] 0.4845037</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="fu">head</span>(km<span class="sc">$</span>solution<span class="sc">$</span>IDX)</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; I1 I2 I3 I4 I5 I6 </span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt;  1  1  3  3  1  3</span></span></code></pre></div>
+<p>The prototypes are a <code>MatH</code> object, so they can be
+plotted:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">plot</span>(km<span class="sc">$</span>solution<span class="sc">$</span>centers)</span></code></pre></div>
+<p><img role="img" aria-label src="data:image/png;base64,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" alt width="100%" /></p>
+<div id="choosing-the-number-of-clusters" class="section level3">
+<h3>Choosing the number of clusters</h3>
+<p>The quality (between / total sum of squares) increases with
+<code>k</code>; a common choice is where the gain begins to flatten
+(elbow):</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>qual <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">7</span>, <span class="cf">function</span>(k)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">WH_kmeans</span>(OzoneFull, <span class="at">k =</span> k, <span class="at">rep =</span> <span class="dv">5</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>, <span class="at">qua =</span> <span class="dv">20</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>            <span class="at">standardize =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>quality)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">round</span>(qual, <span class="dv">3</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; [1] 0.345 0.485 0.571 0.639 0.682 0.713</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">7</span>, qual, <span class="at">type =</span> <span class="st">&quot;b&quot;</span>, <span class="at">xlab =</span> <span class="st">&quot;k&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;quality&quot;</span>)</span></code></pre></div>
+<p><img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfgAAAD8CAMAAACsEEbvAAAAclBMVEUAAAAAADoAAGYAOpAAZrY6AAA6ADo6AGY6OgA6OmY6OpA6ZrY6kJA6kNtmAABmADpmAGZmOgBmOpBmtv+QOgCQOjqQOmaQZgCQkDqQ29uQ2/+2ZgC2/7a2///bkDrb25Db////tmb/25D//7b//9v////UaXwKAAAACXBIWXMAAAsSAAALEgHS3X78AAAHC0lEQVR4nO3da3vaNhyHYWdNdugW0jWkW2FlA+zv/xWHMDkRkVjWX5bk3/Ncu/YmRSW5I5+w3KYjyZrcb4DyBLxowIsGvGjAiwa8aMCLBrxowIsGvGjAiwa8aMCLBrxowIsGvGjAiwa8aMCLBrxowIsGvGjAiwa8aMCLBrxowIsGvGjAiwa8aMCLBrxowIsGvGjAiwa8aMCLBrxowIsGvGjAiwa8aMCLBrxowIsGvGjAiwa8aMCLBrxowIsGvGjAiwa8aMCLBrxowIsGvGgx8A2VXCT8fnE7+rWUsWj4L3839yNfSxN2Psfj4X906+anH2NeS9PVdGcgFvBug++xB76gEsGPey0l7+kwzhw+0WspKs+hu/U+PtFraUwDT9X6Pxv15edebPJD/noyaNQPnBlfbXETDPjaMtqgRsPvbo7vwnMmD3xk5wdnpjvQWPh22V+32376L/i19G5PZ2BJDpiszuM95/PAx/Xm1Nt89PFfZsan6NI1F9u/JOrL3fFqLft4q17vxZOeEXNUX0aTX/kAPneZLnYBn7Gc1zeBz1L+a9rAT1x+8tP7iPpystfOskLI+4CfolKm+YuAT1uB5H3Am/b68kuZ5H3AW/byc5XMb+WjgLcs7eV104C3DPjY11bXadNe/ib+MeDjK/og7lLAx1Ulusvgnrv7dtk0b+/DEICvFd1lcQfO+v7g/1nsDpxqp/opg3vu2oeV2D13taO7ojf1h+m+ve267fWI19bYHNBd8Qd36+Olybfuc4SfCbqLo/qhzWWqnwJ+SDNDd1nBz3i17Hy+k5cx499tRr+/ZwF/sfmiuwyu3M1xJc280V2D4PcLz9la3xzXzs0e3TVwxm+b5mrl+wNzWy07/6l+avim3n0U8/YZlnOa8TLoroHwhz35Ycb7HmpX/WrZ5ukeisxvZNoG7uM9n7rGDl1IFd0tZdow+P65pZcfYjlm6EIC/uKXTxtz780WEUMXEvDvfDl0rg8aOn9NJbfAJ0n2yp2o91NDNvVf/rl45B4xdM7U1TvJGY+6Sw0e9VMhR/XVb+pRf05nxqP+KhF41M8bBr+pelOPuqdhF3DuVtvrbnPxQ/lRQ08U6v6GXrnr/7MceopQv9gg+PZhdfhv90td8Ki/17B9/MF82zS+f0XWbQbc+V5pq2VR/yCDRZPHXcDu9/DXJgv1jzOAP66QLueeO9QHNfAOnIunc/vF1fdvP4pZH4/60AJm/Mb/L8W3y+a625Zwzx3qAQXAl306h3pYAfC+WR0xtGWoBxeyj397V/1zGVfLoj6m2j+kQX1kdcOjPrqQTb33hC7LalnmeXQDP5a9fvzfeVnWzqneC29Z7EqaLKtlgY9v2KdzS3fthhk/p4Zt6t0Sad+j7LpMq2XZx0dX21E94EbVBc9EN6smeNgNqwcedtNqgYfduDrgYTevCnjY7asAnumeouLhYU9T4fCwp6poeNjTVTA87CkrFx72pJUKz3RPXJnwsCfPBt67gno0HuwTFL1o8vJ9mCP5YJ+k6Bm/XxzI7WY87BNlsKnfLz79awUP+1SZ7ON3N75ldeGITPfpKuioHvYpKwYe9mmzgo9cLQv71JUx42GfvBLgme4ZioaPXi0Le5Zi4WPXzsGeqehLtlGrZWHPVs4ZD3vGDK7Vj93Hw56zbEf1TPe8ZYKHPXdZ4GHPXwZ42EtocnjYy2hqeNgLqYRr9ZShyeB5UFVZTQXfRA5GxgEvGvCisY8XjaN60VLCU8mlg083lO1gxb6xnIMBLzoY8KKDAS86GPCigwEvOhjwooNxEUY04EUDXjTgRQNeNOBFA1404EUDXjTgRbOCd0/KuTcaq9t6l+OP7fHRDgZtGsN31i6bq5XRWJvjPTch36cR/P5u1e1+Nvo23BOTvf+W/bg2dr+Ra7OR+sE8jxkZX9hgRvBb52T5Y/E+LnvcSL/9afW+2gerGdp5HyoUN95d0Jsz3McH/s3vZzbj24fvZpv641NhrAbbff7LblPfBf/E7ODb5a3ZWLsbu73frd0+3u3MzGb97ub+gG+2qQ+ddmbw+4Wde2e3+Tj8aA0P7lxWOzSHbriRDD1csDuqN/3pmv18+8Ndy99JK/j9V1P4deD3aARv6u5+eQ1/JHYz3r2x9pvVMdnaclMfvAcygg8/j/xgNMPDHtvzeLs3djhUtLtaETxRuHInGvCiAS8a8KIBLxrwogEvGvCiAS8a8KIBLxrwogEvGvCiAS8a8KIBLxrwogEvGvCiAd9nujqqhoDvA160A3y7tFy7WnrA97m1laZrwEoP+L724Vcpd+BPtcs/vgpt6IF/7LCP30hNeeD73MGd1IE98H1O3e7xKxUEvGjAiwa8aMCLBrxowIsGvGjAiwa8aMCLBrxowIsGvGjAiwa8aMCLBrxowIv2P5vSpqkkIImAAAAAAElFTkSuQmCC" alt width="100%" /></p>
+</div>
+</div>
+<div id="k-means-with-adaptive-distances" class="section level2">
+<h2>K-means with adaptive distances</h2>
+<p><code>WH_adaptive.kmeans()</code> also estimates a weight for each
+variable, so that the variables that better separate the clusters weigh
+more. With <code>schema = 2</code> there is a weight for the position
+(mean) and one for the variability (centred distribution) of each
+variable; with <code>schema = 3</code> or <code>4</code> the weights
+also change with the cluster.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>akm <span class="ot">&lt;-</span> <span class="fu">WH_adaptive.kmeans</span>(OzoneFull, <span class="at">k =</span> <span class="dv">3</span>, <span class="at">schema =</span> <span class="dv">2</span>, <span class="at">rep =</span> <span class="dv">5</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>                          <span class="at">simplify =</span> <span class="cn">TRUE</span>, <span class="at">qua =</span> <span class="dv">20</span>, <span class="at">standardize =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">round</span>(akm<span class="sc">$</span>weights[, <span class="dv">1</span>], <span class="dv">3</span>)   <span class="co"># the same for all the clusters with schema = 2</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt;         Ozone.Conc.ppb(Cen.)         Ozone.Conc.ppb(Var.) </span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt;                        0.990                        1.100 </span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt;          Temperature.C(Cen.)          Temperature.C(Var.) </span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt;                        0.502                        1.699 </span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; Solar.Radiation.WattM2(Cen.) Solar.Radiation.WattM2(Var.) </span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt;                        2.172                        0.834 </span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt;        Wind.Speed.mSec(Cen.)        Wind.Speed.mSec(Var.) </span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt;                        0.925                        0.642</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>akm<span class="sc">$</span>cardinality</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#&gt; IDX</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co">#&gt; Cl.1 Cl.2 Cl.3 </span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt;   28   13   37</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>akm<span class="sc">$</span>quality</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#&gt; [1] 0.5701985</span></span></code></pre></div>
+<p>By default the product of the weights is one
+(<code>weight.sys = &quot;PROD&quot;</code>); with <code>weight.sys = &quot;SUM&quot;</code>
+they sum to one.</p>
+</div>
+<div id="fuzzy-c-means" class="section level2">
+<h2>Fuzzy c-means</h2>
+<p><code>WH_fcmeans()</code> assigns to each individual a degree of
+membership to each cluster; <code>m</code> (greater than 1) controls the
+fuzziness.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>fcm <span class="ot">&lt;-</span> <span class="fu">WH_fcmeans</span>(OzoneFull, <span class="at">k =</span> <span class="dv">3</span>, <span class="at">m =</span> <span class="fl">1.6</span>, <span class="at">rep =</span> <span class="dv">5</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>                  <span class="at">simplify =</span> <span class="cn">TRUE</span>, <span class="at">qua =</span> <span class="dv">20</span>, <span class="at">standardize =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">head</span>(fcm<span class="sc">$</span>solution<span class="sc">$</span>membership), <span class="dv">3</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt;     [,1]  [,2]  [,3]</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; I1 0.955 0.002 0.043</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; I2 0.599 0.017 0.383</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; I3 0.185 0.119 0.696</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt; I4 0.010 0.004 0.986</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; I5 0.920 0.002 0.077</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; I6 0.074 0.018 0.908</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>fcm<span class="sc">$</span>solution<span class="sc">$</span>cardinality   <span class="co"># crisp assignment to the cluster of maximum membership</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt; IDX</span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co">#&gt; Cl.1 Cl.2 Cl.3 </span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co">#&gt;   33   13   32</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a>fcm<span class="sc">$</span>quality</span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt; [1] 0.4470096</span></span></code></pre></div>
+<p>Individuals with no clearly dominant membership lie between
+clusters:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>maxmemb <span class="ot">&lt;-</span> <span class="fu">apply</span>(fcm<span class="sc">$</span>solution<span class="sc">$</span>membership, <span class="dv">1</span>, max)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">sum</span>(maxmemb <span class="sc">&lt;</span> <span class="fl">0.6</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt; [1] 12</span></span></code></pre></div>
+</div>
+<div id="fuzzy-c-means-with-adaptive-distances" class="section level2">
+<h2>Fuzzy c-means with adaptive distances</h2>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>afcm <span class="ot">&lt;-</span> <span class="fu">WH_adaptive_fcmeans</span>(OzoneFull, <span class="at">k =</span> <span class="dv">3</span>, <span class="at">schema =</span> <span class="dv">2</span>, <span class="at">m =</span> <span class="fl">1.6</span>, <span class="at">rep =</span> <span class="dv">3</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>                            <span class="at">simplify =</span> <span class="cn">TRUE</span>, <span class="at">qua =</span> <span class="dv">20</span>, <span class="at">standardize =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">round</span>(afcm<span class="sc">$</span>solution<span class="sc">$</span>var.weights[, <span class="dv">1</span>], <span class="dv">3</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="co">#&gt;         Ozone.Conc.ppb(Cen.)         Ozone.Conc.ppb(Var.) </span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co">#&gt;                        0.944                        1.110 </span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co">#&gt;          Temperature.C(Cen.)          Temperature.C(Var.) </span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co">#&gt;                        0.599                        1.776 </span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co">#&gt; Solar.Radiation.WattM2(Cen.) Solar.Radiation.WattM2(Var.) </span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co">#&gt;                        1.776                        0.794 </span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co">#&gt;        Wind.Speed.mSec(Cen.)        Wind.Speed.mSec(Var.) </span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co">#&gt;                        0.995                        0.638</span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a>afcm<span class="sc">$</span>quality</span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co">#&gt; [1] 0.5286997</span></span></code></pre></div>
+</div>
+<div id="comparing-partitions" class="section level2">
+<h2>Comparing partitions</h2>
+<p>Hierarchical clustering (<code>WH_hclust()</code>, a wrapper of
+<code>stats::hclust()</code>) gives a dendrogram that can be cut at any
+number of clusters:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>hc <span class="ot">&lt;-</span> <span class="fu">WH_hclust</span>(OzoneFull, <span class="at">simplify =</span> <span class="cn">TRUE</span>, <span class="at">qua =</span> <span class="dv">20</span>, <span class="at">standardize =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>                <span class="at">method =</span> <span class="st">&quot;ward.D2&quot;</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="fu">plot</span>(hc, <span class="at">labels =</span> <span class="cn">FALSE</span>, <span class="at">main =</span> <span class="st">&quot;OzoneFull, Ward method&quot;</span>)</span></code></pre></div>
+<p><img role="img" aria-label src="data:image/png;base64,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" alt width="100%" /></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">table</span>(<span class="at">hclust =</span> <span class="fu">cutree</span>(hc, <span class="at">k =</span> <span class="dv">3</span>), <span class="at">kmeans =</span> km<span class="sc">$</span>solution<span class="sc">$</span>IDX)</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="co">#&gt;       kmeans</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="co">#&gt; hclust  1  2  3</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co">#&gt;      1 12  0 34</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co">#&gt;      2 19  0  0</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#&gt;      3  0 13  0</span></span></code></pre></div>
+<p>Self-organising maps (<code>WH_2d_Kohonen_maps()</code> and
+<code>WH_2d_Adaptive_Kohonen_maps()</code>) are also available.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>Irpino, A., Verde, R., Lechevallier, Y. (2006) Dynamic clustering of
+histograms using Wasserstein metric. In: <em>COMPSTAT 2006</em>,
+Physica-Verlag, 869-876.</p>
+<p>Irpino, A., Verde, R., De Carvalho, F.A.T. (2014) Dynamic clustering
+of histogram data based on adaptive squared Wasserstein distances.
+<em>Expert Systems with Applications</em>, 41, 3351-3366. <a href="https://doi.org/10.1016/j.eswa.2013.12.001" class="uri">https://doi.org/10.1016/j.eswa.2013.12.001</a></p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

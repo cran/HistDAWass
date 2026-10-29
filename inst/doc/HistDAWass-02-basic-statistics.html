@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>2. Basic statistics for histogram data</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">2. Basic statistics for histogram data</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(HistDAWass)</span></code></pre></div>
+<p>The statistics of HistDAWass are based on the <strong>L2 Wasserstein
+distance</strong> between two distributions <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span>, i.e. the Euclidean distance between
+their quantile functions <span class="math inline">\(Q_f\)</span> and
+<span class="math inline">\(Q_g\)</span>: <span class="math display">\[d_W^2(f, g) = \int_0^1 \left(Q_f(p) -
+Q_g(p)\right)^2 dp.\]</span> With this distance, the mean of a set of
+histograms is the histogram whose quantile function is the mean of the
+quantile functions, and variances, covariances and correlations are
+defined accordingly (Irpino and Verde, 2015).</p>
+<p>We use the <code>BLOOD</code> data: 14 groups of patients described
+by three histogram-valued variables.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>BLOOD</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt; a matrix of distributions </span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt;  3  variables  14  rows </span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt;  each distibution in the cell is represented by the mean and the standard deviation </span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt;                  Cholesterol               Hemoglobin                Hematocrit        </span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; u1: F-20  [m= 150.1  ,s= 26.336 ]  [m= 13.695  ,s= 0.55031 ] [m= 41.526  ,s= 2.1968 ] </span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; u2: F-30 [m= 150.71  ,s= 25.284 ]  [m= 12.158  ,s= 0.52834 ] [m= 36.497  ,s= 2.1225 ] </span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; u3: F-40 [m= 164.96  ,s= 25.334 ]  [m= 12.134  ,s= 0.50739 ] [m= 36.549  ,s= 2.2299 ] </span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; u4: F-50 [m= 186.51  ,s= 26.655 ]  [m= 12.133  ,s= 0.58514 ]  [m= 36.48  ,s= 2.1985 ] </span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; u5: F-60 [m= 194.03  ,s= 25.215 ]  [m= 12.145  ,s= 0.52031 ] [m= 36.341  ,s= 2.0979 ] </span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; u6: F-70  [m= 193.2  ,s= 26.561 ]  [m= 12.205  ,s= 0.52258 ] [m= 36.703  ,s= 2.1818 ] </span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; u7: F-80+ [m= 187.14  ,s= 24.592 ]  [m= 12.141  ,s= 0.55247 ] [m= 36.503  ,s= 2.1911 ] </span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; u8: M-20 [m= 159.62  ,s= 19.844 ]  [m= 13.557  ,s= 0.29974 ]  [m= 40.5  ,s= 1.6358 ]  </span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; u9: M-30 [m= 164.43  ,s= 26.486 ]  [m= 12.088  ,s= 0.62237 ] [m= 35.914  ,s= 2.1141 ] </span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt; u10: M-40 [m= 170.06  ,s= 20.011 ]  [m= 12.092  ,s= 0.52656 ] [m= 36.456  ,s= 2.2476 ] </span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt; u11: M-50 [m= 194.22  ,s= 30.165 ]  [m= 12.214  ,s= 0.59708 ]  [m= 36.72  ,s= 2.0024 ] </span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt; u12: M-60 [m= 203.36  ,s= 26.223 ]  [m= 12.245  ,s= 0.50862 ] [m= 35.814  ,s= 2.0083 ] </span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt; u13: M-70 [m= 205.66  ,s= 22.499 ]  [m= 12.15  ,s= 0.33425 ]   [m= 35.75  ,s= 2.1651 ] </span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt; u14: M-80+ [m= 205.48  ,s= 23.537 ]   [m= 12.12  ,s= 0.6163 ]   [m= 38.45  ,s= 2.6158 ]</span></span></code></pre></div>
+<div id="statistics-of-a-single-histogram" class="section level2">
+<h2>Statistics of a single histogram</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>d <span class="ot">&lt;-</span> BLOOD<span class="sc">@</span>M[[<span class="dv">1</span>, <span class="dv">1</span>]] <span class="co"># cholesterol of the first group</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>d</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt;               X             p</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; Bin_1  [ 80 ; 100 )         0.025</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; Bin_2 [ 100 ; 120 )         0.075</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; Bin_3 [ 120 ; 135 )         0.175</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; Bin_4 [ 135 ; 150 )          0.25</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; Bin_5 [ 150 ; 165 )           0.2</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; Bin_6 [ 165 ; 180 )         0.162</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; Bin_7 [ 180 ; 200 )         0.088</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; Bin_8 [ 200 ; 240 ]         0.025</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt;  mean =  150.1025   std  =  26.3356126518827 </span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="fu">meanH</span>(d)    <span class="co"># mean</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; [1] 150.1025</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="fu">stdH</span>(d)     <span class="co"># standard deviation</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; [1] 26.33561</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="fu">skewH</span>(d)    <span class="co"># skewness</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt; [1] 0.2293406</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="fu">kurtH</span>(d)    <span class="co"># kurtosis (3 for a Gaussian)</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="co">#&gt; [1] 3.366591</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="fu">compQ</span>(d, <span class="fl">0.5</span>)   <span class="co"># the median</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="co">#&gt; [1] 148.5</span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="fu">compQ</span>(d, <span class="fl">0.25</span>); <span class="fu">compQ</span>(d, <span class="fl">0.75</span>)  <span class="co"># first and third quartiles</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="co">#&gt; [1] 132.8571</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a><span class="co">#&gt; [1] 167.3148</span></span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a><span class="fu">compP</span>(d, <span class="dv">150</span>)   <span class="co"># the cdf at 150</span></span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a><span class="co">#&gt; [1] 0.525</span></span></code></pre></div>
+<p>The centres, the half-widths and the probabilities of the bins:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">str</span>(<span class="fu">crwtransform</span>(d))</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; List of 3</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt;  $ Centers: num [1:8] 90 110 128 142 158 ...</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt;  $ Radii  : num [1:8] 10 10 7.5 7.5 7.5 7.5 10 20</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;  $ Weights: num [1:8] 0.025 0.075 0.175 0.25 0.2 0.162 0.088 0.025</span></span></code></pre></div>
+</div>
+<div id="arithmetic-and-distance-between-two-histograms" class="section level2">
+<h2>Arithmetic and distance between two histograms</h2>
+<p>Sums and products by a number act on the quantile functions:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>d1 <span class="ot">&lt;-</span> BLOOD<span class="sc">@</span>M[[<span class="dv">1</span>, <span class="dv">1</span>]]</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> BLOOD<span class="sc">@</span>M[[<span class="dv">2</span>, <span class="dv">1</span>]]</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>d12 <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> d1 <span class="sc">+</span> <span class="fl">0.5</span> <span class="sc">*</span> d2   <span class="co"># the Wasserstein mean of the two histograms</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="fu">c</span>(<span class="fu">meanH</span>(d1), <span class="fu">meanH</span>(d2), <span class="fu">meanH</span>(d12))</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; [1] 150.1025 150.7100 150.4063</span></span></code></pre></div>
+<p>The squared distance and its decomposition into a
+<strong>position</strong> (difference of the means), a
+<strong>size</strong> (difference of the standard deviations) and a
+<strong>shape</strong> component; <code>rQQ</code> is the correlation
+between the quantile functions:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">WassSqDistH</span>(d1, d2)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; [1] 2.638558</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="fu">WassSqDistH</span>(d1, d2, <span class="at">details =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; SQ_W_dist  POSITION      SIZE     SHAPE       rQQ </span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; 2.6385577 0.3690563 1.1066417 1.1628598 0.9991268</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="fu">rQQ</span>(d1, d2)</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; [1] 0.9991268</span></span></code></pre></div>
+</div>
+<div id="statistics-of-each-histogram-of-a-matrix" class="section level2">
+<h2>Statistics of each histogram of a matrix</h2>
+<p><code>get.MatH.stats()</code> returns a matrix with a statistic for
+each cell:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">get.MatH.stats</span>(BLOOD, <span class="at">stat =</span> <span class="st">&quot;mean&quot;</span>)<span class="sc">$</span>mat</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt;            Cholesterol Hemoglobin Hematocrit</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; u1: F-20      150.1025   13.69530   41.52550</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; u2: F-30      150.7100   12.15805   36.49700</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; u3: F-40      164.9600   12.13355   36.54900</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; u4: F-50      186.5075   12.13270   36.48025</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; u5: F-60      194.0300   12.14510   36.34075</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; u6: F-70      193.2000   12.20480   36.70300</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; u7: F-80+     187.1400   12.14085   36.50350</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; u8: M-20      159.6225   13.55700   40.50000</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt; u9: M-30      164.4300   12.08820   35.91400</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt; u10: M-40     170.0550   12.09160   36.45650</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; u11: M-50     194.2200   12.21360   36.72000</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; u12: M-60     203.3600   12.24500   35.81450</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; u13: M-70     205.6650   12.15000   35.75000</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; u14: M-80+    205.4750   12.11960   38.45000</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="fu">get.MatH.stats</span>(BLOOD, <span class="at">stat =</span> <span class="st">&quot;std&quot;</span>)<span class="sc">$</span>mat[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, ]</span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt;          Cholesterol Hemoglobin Hematocrit</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt; u1: F-20    26.33561  0.5503071   2.196782</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co">#&gt; u2: F-30    25.28364  0.5283404   2.122457</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co">#&gt; u3: F-40    25.33374  0.5073865   2.229933</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co">#&gt; u4: F-50    26.65510  0.5851359   2.198471</span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="co">#&gt; u5: F-60    25.21492  0.5203070   2.097889</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="fu">get.MatH.stats</span>(BLOOD, <span class="at">stat =</span> <span class="st">&quot;quantile&quot;</span>, <span class="at">prob =</span> <span class="fl">0.9</span>)<span class="sc">$</span>mat[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, ]</span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="co">#&gt;          Cholesterol Hemoglobin Hematocrit</span></span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a><span class="co">#&gt; u1: F-20    182.9545   14.40000   44.74390</span></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a><span class="co">#&gt; u2: F-30    181.1364   12.72166   39.27941</span></span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a><span class="co">#&gt; u3: F-40    197.0608   12.73448   39.32057</span></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a><span class="co">#&gt; u4: F-50    220.2000   12.87619   39.33929</span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a><span class="co">#&gt; u5: F-60    227.9452   12.82787   39.00549</span></span></code></pre></div>
+<p>Available statistics: <code>&quot;mean&quot;</code>, <code>&quot;median&quot;</code>,
+<code>&quot;min&quot;</code>, <code>&quot;max&quot;</code>, <code>&quot;std&quot;</code>,
+<code>&quot;skewness&quot;</code>, <code>&quot;kurtosis&quot;</code> and
+<code>&quot;quantile&quot;</code>.</p>
+</div>
+<div id="mean-histogram-variance-covariance-and-correlation-of-the-variables" class="section level2">
+<h2>Mean histogram, variance, covariance and correlation of the
+variables</h2>
+<p>The mean histogram (the Wasserstein barycentre) of a variable:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>m_chol <span class="ot">&lt;-</span> <span class="fu">WH.vec.mean</span>(BLOOD[, <span class="st">&quot;Cholesterol&quot;</span>])</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>m_chol</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt; Output shows the first five and the last five bins due to eccesive length </span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt;                  X                 p</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; Bin_1 [113.57 ; 121.57)             0.009</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; Bin_2    [121.57 ; 124)             0.003</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; Bin_3    [124 ; 124.63)             0.001</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; Bin_4 [124.63 ; 126.78)             0.004</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; Bin_5 [126.78 ; 127.25)             0.001</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#&gt; ...               ...               ...</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#&gt; Bin_80 [229.74 ; 231.18)             0.003</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co">#&gt; Bin_81 [231.18 ; 234.99)             0.007</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt; Bin_82 [234.99 ; 235.66)             0.001</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt; Bin_83 [235.66 ; 239.15)             0.004</span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#&gt; Bin_84 [239.15 ; 246.79)             0.008</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt;  mean =  180.676964285714   std  =  24.7830931266904 </span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="fu">plot</span>(m_chol)</span></code></pre></div>
+<p><img role="img" aria-label src="data:image/png;base64,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" alt width="100%" /></p>
+<p>Weights can be given, e.g. proportional to the size of the
+groups:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">7</span>), <span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">7</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">meanH</span>(<span class="fu">WH.vec.mean</span>(BLOOD[, <span class="dv">1</span>], <span class="at">w =</span> w))</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; [1] 178.8632</span></span></code></pre></div>
+<p>The variance-covariance and the correlation matrices of the histogram
+variables, and the matrix of the sums of squared deviations from the
+mean:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">WH.var.covar</span>(BLOOD)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt;             Cholesterol Hemoglobin  Hematocrit</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; Cholesterol  388.137633 -5.0005134 -14.9202378</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; Hemoglobin    -5.000513  0.2802215   0.8266558</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; Hematocrit   -14.920238  0.8266558   2.9779786</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="fu">WH.correlation</span>(BLOOD)</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt;             Cholesterol Hemoglobin Hematocrit</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; Cholesterol   1.0000000 -0.4794806 -0.4388560</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt; Hemoglobin   -0.4794806  1.0000000  0.9049264</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt; Hematocrit   -0.4388560  0.9049264  1.0000000</span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="fu">WH.SSQ</span>(BLOOD)</span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co">#&gt;             Cholesterol Hemoglobin Hematocrit</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#&gt; Cholesterol  5433.92687 -70.007187 -208.88333</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt; Hemoglobin    -70.00719   3.923101   11.57318</span></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt; Hematocrit   -208.88333  11.573182   41.69170</span></span></code></pre></div>
+<p>The versions with suffix 2 compute the same quantities between the
+variables of two matrices with the same rows:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">WH.correlation2</span>(BLOOD[, <span class="dv">1</span>], BLOOD[, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>])</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co">#&gt;             Hemoglobin Hematocrit</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt; Cholesterol -0.4794806  -0.438856</span></span></code></pre></div>
+</div>
+<div id="distances-between-individuals" class="section level2">
+<h2>Distances between individuals</h2>
+<p>The matrix of the L2 Wasserstein distances between the rows of a
+<code>MatH</code> (summing the squared distances over the variables),
+optionally after standardising the variables:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="fu">WH_MAT_DIST</span>(BLOOD, <span class="at">standardize =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">round</span>(D[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="dv">3</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co">#&gt;          u1: F-20 u2: F-30 u3: F-40 u4: F-50 u5: F-60</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt; u1: F-20    0.000    4.123    4.204    4.553    4.761</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co">#&gt; u2: F-30    4.123    0.000    0.748    1.840    2.215</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co">#&gt; u3: F-40    4.204    0.748    0.000    1.122    1.496</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co">#&gt; u4: F-50    4.553    1.840    1.122    0.000    0.455</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="co">#&gt; u5: F-60    4.761    2.215    1.496    0.455    0.000</span></span></code></pre></div>
+<p>For large matrices of histograms with different bins,
+<code>simplify = TRUE</code> approximates each histogram with
+<code>qua</code> equally spaced quantiles: the computations are much
+faster, at the cost of an approximation error that decreases with
+<code>qua</code>. The relative errors of the distances:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>u <span class="ot">&lt;-</span> <span class="fu">upper.tri</span>(D)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="cf">for</span> (q <span class="cf">in</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">100</span>)) {</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  Dq <span class="ot">&lt;-</span> <span class="fu">WH_MAT_DIST</span>(BLOOD, <span class="at">standardize =</span> <span class="cn">TRUE</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>, <span class="at">qua =</span> q)</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>  err <span class="ot">&lt;-</span> <span class="fu">abs</span>(Dq[u] <span class="sc">-</span> D[u]) <span class="sc">/</span> D[u]</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;qua =&quot;</span>, q, <span class="st">&quot; median:&quot;</span>, <span class="fu">signif</span>(<span class="fu">median</span>(err), <span class="dv">2</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>      <span class="st">&quot; maximum:&quot;</span>, <span class="fu">signif</span>(<span class="fu">max</span>(err), <span class="dv">2</span>), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>}</span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co">#&gt; qua = 20  median: 0.006  maximum: 0.13 </span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co">#&gt; qua = 100  median: 0.00032  maximum: 0.0075</span></span></code></pre></div>
+<p>The largest relative errors concern the smallest distances; values of
+<code>qua</code> between 50 and 100 are usually a good compromise.</p>
+</div>
+<div id="reference" class="section level2">
+<h2>Reference</h2>
+<p>Irpino, A., Verde, R. (2015) Basic statistics for distributional
+symbolic variables: a new metric-based approach. <em>Advances in Data
+Analysis and Classification</em>, 9(2), 143-175. <a href="https://doi.org/10.1007/s11634-014-0176-4" class="uri">https://doi.org/10.1007/s11634-014-0176-4</a></p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

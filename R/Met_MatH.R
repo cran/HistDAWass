@@ -43,25 +43,14 @@ setMethod(
   "[",
   signature(x = "MatH"),
   function(x, i, j, ..., drop = TRUE) {
-    if (missing(i) && missing(j)) {
-      i <- c(1:nrow(x@M))
-      j <- c(1:ncol(x@M))
-    }
-    else {
-      if (missing(i)) i <- c(1:nrow(x@M))
-      if (missing(j)) j <- c(1:ncol(x@M))
-    }
-    # consider negative indexes!TO BE DONE!!
-    if (min(i) <= 0 | min(j) <= 0) {
-      stop("negative indexes are not allowed in subsetting [,] a MatH object")
-    }
-
-
-    x@M <- matrix(x@M[i, j],
-      nrow = length(i), ncol = length(j),
-      dimnames = list(row.names(x@M)[i], colnames(x@M)[j])
-    )
-
+    # standard matrix subsetting: positive, negative, character (names) and
+    # logical indices are allowed, the names of rows and columns are kept
+    # (up to 1.0.9 negative indices were not allowed and character indices
+    # gave NA names)
+    M <- x@M
+    if (missing(i)) i <- seq_len(nrow(M))
+    if (missing(j)) j <- seq_len(ncol(M))
+    x@M <- M[i, j, drop = FALSE]
     return(x)
   }
 )
@@ -949,12 +938,8 @@ setMethod(
     if (is.registeredMH(object)) {
       return(object)
     }
-    commoncdf <- numeric(0)
-    for (i in 1:nrows) {
-      for (j in 1:ncols) {
-        commoncdf <- rbind(commoncdf, t(t(object@M[i, j][[1]]@p)))
-      }
-    }
+    # all the cdf values (up to 1.0.8 collected with rbind() in a loop)
+    commoncdf <- unlist(lapply(object@M, function(o) o@p), use.names = FALSE)
     commoncdf <- sort(unique(round(commoncdf, digits = 10)))
     commoncdf[1] <- 0
     commoncdf[length(commoncdf)] <- 1
@@ -972,7 +957,7 @@ setMethod(
         # for (rr in 1:nr){
         #   x=c(x,compQ(object@M[r,c][[1]],commoncdf[rr]))
         # }
-        NEWMAT@M[r, c][[1]] <- new("distributionH", x, commoncdf)
+        NEWMAT@M[r, c][[1]] <- .distH(x, commoncdf)
       }
     }
     return(NEWMAT)

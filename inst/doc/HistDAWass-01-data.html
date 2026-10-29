@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>1. Creating histogram-valued data</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">1. Creating histogram-valued data</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(HistDAWass)</span></code></pre></div>
+<p>In HistDAWass a histogram is a <code>distributionH</code> object and
+a data table whose cells are histograms is a <code>MatH</code> object:
+rows are individuals (or groups) and columns are histogram-valued
+variables. This vignette shows how to build them.</p>
+<div id="a-single-histogram" class="section level2">
+<h2>A single histogram</h2>
+<p>A histogram is described by its <strong>cumulative distribution
+function</strong> (cdf): the bounds of the bins <code>x</code> and the
+values <code>p</code> of the cdf at the bounds. For example, the
+histogram</p>
+<table>
+<thead>
+<tr class="header">
+<th>Bin</th>
+<th align="right">Probability</th>
+<th align="right">cdf</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>[1, 2)</td>
+<td align="right">0.4</td>
+<td align="right">0.4</td>
+</tr>
+<tr class="even">
+<td>[2, 3]</td>
+<td align="right">0.6</td>
+<td align="right">1.0</td>
+</tr>
+</tbody>
+</table>
+<p>is created as</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>d1 <span class="ot">&lt;-</span> <span class="fu">distributionH</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="at">p =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.4</span>, <span class="dv">1</span>))</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>d1</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt;           X         p</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt; Bin_1 [ 1 ; 2 )       0.4</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; Bin_2 [ 2 ; 3 ]       0.6</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt;  mean =  2.1   std  =  0.568624070307733 </span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
+<p><code>x</code> must be non-decreasing and <code>p</code> must be
+non-decreasing from 0 to 1. The mean and the standard deviation are
+computed when the object is created and are stored in the slots
+<code>m</code> and <code>s</code>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>d1<span class="sc">@</span>m</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; [1] 2.1</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>d1<span class="sc">@</span>s</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; [1] 0.5686241</span></span></code></pre></div>
+<p>A single value defines an impulse (a degenerate distribution), and a
+bin with zero probability (an <em>empty bin</em>) gets a tiny weight of
+<code>1e-8</code>, to avoid numerical problems:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">distributionH</span>(<span class="dv">5</span>)<span class="sc">@</span>x</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; [1] 5 5</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>d2 <span class="ot">&lt;-</span> <span class="fu">distributionH</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>), <span class="at">p =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="dv">1</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="fu">diff</span>(d2<span class="sc">@</span>p) <span class="co"># the probabilities of the bins</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; [1] 5e-01 1e-08 5e-01</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">plot</span>(d1)</span></code></pre></div>
+<p><img role="img" aria-label src="data:image/png;base64,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" alt width="100%" /></p>
+</div>
+<div id="from-raw-data-to-a-histogram" class="section level2">
+<h2>From raw data to a histogram</h2>
+<p><code>data2hist()</code> builds a histogram from a sample of values.
+Several algorithms are available for choosing the bins:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">300</span>, <span class="at">mean =</span> <span class="dv">10</span>, <span class="at">sd =</span> <span class="dv">2</span>), <span class="fu">rnorm</span>(<span class="dv">200</span>, <span class="at">mean =</span> <span class="dv">18</span>, <span class="at">sd =</span> <span class="dv">1</span>))</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>h_base <span class="ot">&lt;-</span> <span class="fu">data2hist</span>(x, <span class="at">algo =</span> <span class="st">&quot;base&quot;</span>)                     <span class="co"># the bins of hist()</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>h_quan <span class="ot">&lt;-</span> <span class="fu">data2hist</span>(x, <span class="at">algo =</span> <span class="st">&quot;FixedQuantiles&quot;</span>, <span class="at">qua =</span> <span class="dv">10</span>) <span class="co"># 10 equal-probability bins</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>h_man  <span class="ot">&lt;-</span> <span class="fu">data2hist</span>(x, <span class="at">algo =</span> <span class="st">&quot;ManualBreaks&quot;</span>, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">25</span>, <span class="at">by =</span> <span class="fl">2.5</span>))</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>h_pl   <span class="ot">&lt;-</span> <span class="fu">data2hist</span>(x, <span class="at">algo =</span> <span class="st">&quot;PolyLine&quot;</span>, <span class="at">epsilon =</span> <span class="fl">0.01</span>) <span class="co"># piecewise linear cdf</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="fu">sapply</span>(<span class="fu">list</span>(<span class="at">base =</span> h_base, <span class="at">quantiles =</span> h_quan, <span class="at">manual =</span> h_man, <span class="at">polyline =</span> h_pl),</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>       <span class="cf">function</span>(h) <span class="fu">length</span>(h<span class="sc">@</span>x) <span class="sc">-</span> <span class="dv">1</span>) <span class="co"># number of bins</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt;      base quantiles    manual  polyline </span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt;         9        10         8        15</span></span></code></pre></div>
+<p>The default, <code>algo = &quot;histogram&quot;</code>, chooses the bins with
+the penalised likelihood method of the <strong>histogram</strong>
+package: it is accurate but slower for large samples.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">plot</span>(h_quan)</span></code></pre></div>
+<p><img role="img" aria-label src="data:image/png;base64,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" alt width="100%" /></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">plot</span>(h_quan, <span class="at">type =</span> <span class="st">&quot;CDF&quot;</span>)</span></code></pre></div>
+<p><img role="img" aria-label src="data:image/png;base64,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" alt width="100%" /></p>
+</div>
+<div id="a-matrix-of-histograms" class="section level2">
+<h2>A matrix of histograms</h2>
+<p>A <code>MatH</code> object is created from a list of
+<code>distributionH</code> objects, filled by columns (default) or by
+rows:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>ListOfDist <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">distributionH</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.4</span>, <span class="dv">1</span>)),</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="fu">distributionH</span>(<span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">15</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.2</span>, <span class="fl">0.7</span>, <span class="dv">1</span>)),</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="fu">distributionH</span>(<span class="fu">c</span>(<span class="dv">9</span>, <span class="dv">11</span>, <span class="dv">20</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">1</span>)),</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="fu">distributionH</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">8</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.3</span>, <span class="dv">1</span>)),</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  <span class="fu">distributionH</span>(<span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">15</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.75</span>, <span class="dv">1</span>)),</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>  <span class="fu">distributionH</span>(<span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">22</span>, <span class="dv">24</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.12</span>, <span class="dv">1</span>))</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>)</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>MyMAT <span class="ot">&lt;-</span> <span class="fu">MatH</span>(<span class="at">x =</span> ListOfDist, <span class="at">nrows =</span> <span class="dv">3</span>, <span class="at">ncols =</span> <span class="dv">2</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>              <span class="at">rownames =</span> <span class="fu">c</span>(<span class="st">&quot;I1&quot;</span>, <span class="st">&quot;I2&quot;</span>, <span class="st">&quot;I3&quot;</span>), <span class="at">varnames =</span> <span class="fu">c</span>(<span class="st">&quot;Var1&quot;</span>, <span class="st">&quot;Var2&quot;</span>))</span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>MyMAT</span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; a matrix of distributions </span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt;  2  variables  3  rows </span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt;  each distibution in the cell is represented by the mean and the standard deviation </span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt;               Var1                     Var2          </span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#&gt; I1  [m= 2.1  ,s= 0.56862 ]   [m= 5.6  ,s= 1.6248 ]  </span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#&gt; I2  [m= 9.75  ,s= 2.0907 ]  [m= 9.875  ,s= 1.7515 ] </span></span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a><span class="co">#&gt; I3 [m= 12.75  ,s= 3.3323 ]  [m= 22.76  ,s= 0.86933 ]</span></span></code></pre></div>
+<div id="from-a-data-frame-of-raw-data" class="section level3">
+<h3>From a data frame of raw data</h3>
+<p>The most common case: a data frame of raw observations and a grouping
+variable. Each group becomes a row of the <code>MatH</code>, each
+numeric variable a column. With the <code>iris</code> data, the three
+species are the individuals:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>groups <span class="ot">&lt;-</span> <span class="fu">levels</span>(iris<span class="sc">$</span>Species)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>vars <span class="ot">&lt;-</span> <span class="fu">names</span>(iris)[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>cells <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="cf">for</span> (v <span class="cf">in</span> vars) {           <span class="co"># the matrix is filled by columns</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="cf">for</span> (g <span class="cf">in</span> groups) {</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>    cells <span class="ot">&lt;-</span> <span class="fu">c</span>(cells, <span class="fu">data2hist</span>(iris[iris<span class="sc">$</span>Species <span class="sc">==</span> g, v],</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>                                <span class="at">algo =</span> <span class="st">&quot;FixedQuantiles&quot;</span>, <span class="at">qua =</span> <span class="dv">5</span>))</span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>  }</span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>}</span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a>IRIS <span class="ot">&lt;-</span> <span class="fu">MatH</span>(<span class="at">x =</span> cells, <span class="at">nrows =</span> <span class="fu">length</span>(groups), <span class="at">ncols =</span> <span class="fu">length</span>(vars),</span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a>             <span class="at">rownames =</span> groups, <span class="at">varnames =</span> vars)</span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>IRIS</span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#&gt; a matrix of distributions </span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt;  4  variables  3  rows </span></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt;  each distibution in the cell is represented by the mean and the standard deviation </span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="co">#&gt;               Sepal.Length             Sepal.Width              Petal.Length             Petal.Width       </span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#&gt; setosa [m= 5.026  ,s= 0.36823 ] [m= 3.414  ,s= 0.46861 ] [m= 1.45  ,s= 0.20857 ]  [m= 0.25  ,s= 0.11328 ] </span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a><span class="co">#&gt; versicolor [m= 5.918  ,s= 0.53018 ] [m= 2.76  ,s= 0.33427 ]  [m= 4.27  ,s= 0.51617 ]  [m= 1.356  ,s= 0.19626 ]</span></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a><span class="co">#&gt; virginica [m= 6.56  ,s= 0.71396 ]  [m= 2.96  ,s= 0.36203 ]  [m= 5.552  ,s= 0.57681 ] [m= 2.01  ,s= 0.28501 ]</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">plot</span>(IRIS)                  <span class="co"># histograms</span></span></code></pre></div>
+<p><img role="img" aria-label src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfgAAAEgCAMAAABvm5EPAAABjFBMVEUAAAAZGT8ZGWIZPz8ZP2IZP4EZYoEZYp8aGhozMzM/GRk/GT8/GWI/Pxk/Pz8/Yj8/YmI/YoE/Yp8/gb1HzNBNTU1NTW5NTY5Nbo5NbqtNjqtNjshN0tZiGRliGT9iGWJiPxligWJin71in9luTU1uTW5uTY5ubk1ubqtujm5ujo5ujqtujshuq+SBPxmBYhmBYj+BvdmGsxWOTU2OTW6Obk2Obm6Ojm6Ojo6OjquOq46Oq8iOq+SOyKuOyMiOyP+ewEefYhmfYj+fYoGfn2Kfn4GfvYGf2Z+f2dmkxk2rbk2rbm6rjk2rjm6rjqurq46rq6urq8irq+SryMir5OSr5P+9gT+9vYG9vZ+92Z+92b292dnIjk3Ijm7IjqvIq47Iq6vIyKvI5OTI5P/I/8jI/+TI///SnvnYpP/Zn2LZvYHZvZ/Z2Z/Z2b3Z2dnkq27kq47kq6vkyI7kyKvk5Mjk5OTk5P/k/8jk/+Tk///r6+v0mZP6n5n/yI7/yKv/5Kv/5Mj//8j//+T////4IyUhAAAACXBIWXMAAAsSAAALEgHS3X78AAAMv0lEQVR4nO3di2PbRh3AcbWs5MG6AbGaZG6hkLRhj3TrCxiDJoECTVi6B3UZNBtjhaTpkjSFstGmqRvrH+ckWbYs3U86yXISWd/b6pzuTvrd3Ucnx00jWQ6pksk66g6QjiYBX9EEfEUT8BVNueF3Di0RbxDxgK9oPOArGg/4isYDvqLxgK9oPOArGq9w+K1Loz+4Fy18+L3L7uurt3R7bP/u1uZJbU24o3K9HHH70sTO5onLO3dP/cXrwNa5mbRgqfE2R0dHX7kVdLwbK+/oDOClkPmGNyj4zVOfnZuJFiZOjeppX/AJEZdGdpZGJ9wJ8pKambRgqfHU3tvvjgTZUKycozOBl0LmGt7A4E9456JahJsnTqvXh+PqbA1PTbvu9dFT97bfG319/KeXRk/e9DZzTkxCxM1Tfz33E/VnRm2qYN9JD5Yaz1W4NOGG+5s61h/6Hp0hvDZkruENCn77tyrs3ZHtdycUyJa7FLcvzYSnJlSnRvRw3DtL1eaPLuecmMSIN0/+8ce/f9WdKLNgqfH8664fzl1b/Y7O+FKvDZljeIP75u7r8xNLqqsjbieXJr5+7/Roz9QEdWpq7o50L09b8cu16cTIEbfOvaauhq+duqc2zYKlxvOvpEG4/kdntuL1IXMNb1DwSyPqsnTXfUfyz/ul7352PrIm/LF01oQq7gs+IaKarRm1YEZ2OksiLVhqPF/BC6eO1f/ojOE1IXMNb2Df1Z9XlyX35bL7Tqfe78ZfOT2hOub+P65O2gm/zuudel/6/vjM1vmTN/uBT4i4c1fNmXvk4E0wNVhqPF/BC+ceq+/RGcNrQuYa3uA/x6d+e+m2eJjYx1BH0+OZRDRJ5vGSk9nohuZzfDelM6izdPSHSd+AhjpqMqTjBW82uiGEL7ajxCs2HvAVjQd8RePlhn/WSaHsM8tN+qrejQxVoXiOpo1JrrdbKXtE4lmhnXv7Gd/O1aB3Qq1n2qktMDcY+L3ne8cRfnFxMTd8Tf0HPPByv3M2AF6oAr7YHPDAAw888MADDzzwun4C303AZ28AvFAFfLE54IEHHnjggQceeOB1/QS+m4DP3gB4oQr4YnPAAw888MADDzzwwOv6CXw3AZ+9AfBCFfDF5oAHvmD47u+eAG/QYHjg99wEvGkD4IUq4IvNAQ888MADDzzwwAOv6yfwbn/bCfjMDUoOv+dzA5+5AfBCFfDF5oAHHnjggQd+2OA7CfhqwS+2E/DAAw98Nwc88MADr+kn8M+AFwqGFb77EQn43A1KCe8SP/fFgc/ZAHihKie8FU454b19PXj/X4wDXwZ4T3nZt84LX6vVfPiamwMeeF2/NQXZ4LtXKONR5sgNGr4nxccMfLAdgt/Y2LA2HqgX41HmyA0avlOlXf7Ad7aBF6qALzYHPPDAAw888MADDzzwwIv91hQAHxsz8ME28EJV4fAJ6RnwQwy/HOQWozngSwCftHCDH8UCr8mVHl7AC3LAC7lhhe/9hxclhY/+ZPMI4FtfrJcM/sqVK6WH3/DTg41g9R8+/P4k8BWCP1ixp+63Vuy3/7diT65/btvv+EXNWXtqHXh9vzUFpYPfP9NwnEf11ofzasXvT95/eXXeK1KX/pUF4PX91hSUDr61ap9prNm2XVfwj+qOs1b3il6uztnAC/3WFJQO3l3Z8y6407zYXvFe0dobT64DL/RbU1A6+OZ1e6px4L+03+O9ov3ZqTl1CoyNjUX2trpfrPiBc39oTEjSMa3l5WUrUt+zndCZaJW/n/rPStmxmNTpZrTvA4qVK0knsbySC17xUs5azHDbE11OG0/Xz8JXfKxJgeu8mwMeeOCBBx544IEHXtdP4MWRAW/QAHihCvhic8ADDzzwwAMPPPDA6/oJvDgy4A0aDCO8cCef2Bbwwwbf+VcYye2ABz5eBXyxOeCBBx544IEHHnjgdf0EXhwZ8AYNgBeqgC82BzzwwAMPPPDAAw+8rp/AiyM7DHjdbc6OHF7/OBb9EYAXqtLgg197D/8ufJaJiOYKgXd/mz6pQWgbeKEK+GJzwAMPPPDAA18YfOwBirF2wA8lfPvWV8/3gK8qfGjpAx9sVwF+r3vfO+CDbeC1W8AXnQMeeOCLgQ99fgG+UvC1s+69b70b4AIPfMoRgNduAZ+Qi//NGPDmExHNlQl+w7/FOfDAp+eGGl736FDTySkKPv7zCf0R8sH7Bz8u8LEJl+A1MMLk5INfDFLoyROmk1MUvPv1bG1g8O7zK44PfPdpJHsdcx18tJ08OcDrc8ADXwH42FtE+1/VAm84Nu+ljPAR0MUQMvAGY/NegC8lfHChA75q8P4j6YAHHnjggT8c+OgHDOCrAl/rSUcHr/lb0OrBhz7bVwZ+I0gPNvqFb15oiFvHG779NGnghaOkwCedBsAH4y05fGtl3lmrt1bst582L8xN/nPFnrqvqFXB9LrjP0Ncwbczc5PrwAfjLTm8sz/97bXGo3rrw/nm7IKzf6bhrfFH00/X5vcn77+8Oq+22hlVz4rvjLfs8AfXPlLItm3XmxfXndaqfaahqNfqquqRelmru6eBn7m4Dnx3vGWHd9bseY/Y8WHVtb+94uvRFQ98KJUf3r26H1y3pxoubNPLqPf4VXsq9h7vwY+NjTm6FP1W0eottBLbGSRdOyv6dXl5Oe/xsyZLsxm8WAMKHT6uFfoj9CnlMNmTdBI7ZhsZqkLxTFattXgMfoUqS4PohKas+L5zwAMPPPDAAw888MDr+gm8ODLgDRoAL1QBX2wOeOCBBx544IEHHnhdP4EXRwa8QQPghSrgi80BDzzwwAMPPPDAA6/rJ/DiyIA3aAC8UAV8sTnggQceeOCBBx544HX9BF4cGfAGDYAXqoAvNjds8OGbGnfvAAX88MNrbncGvCZ3FPDSkymAH3b4yB0xgAde3gv4YnPAAw/8YOFD384AXyn4Wq0GfMXg/duZA189eP+ud8ADH90BeGEv4IvNAQ888MADX3b44C8NgE+cJk2u7PDtp1Idb/j0n9UBnzFXDvjOrezF9Q98xhzwxwy+96oW2gH44YZvP8QivgPwwEePURX4eBLgNS0t4NsBSwjfs9W+BujhQw8jCnLAtwMCD7y2XSXgpZQ0dUXAh0IBfxTwmnZubvDw7SfRna0dDXzSCQ/8EMN7jx4MHkT4oPNAQuCTpg747PDiJSZIwEcuvcMCH3lmbHQD+N6n0R4nePcpsvGNnlLgpe0yw5sm7eiBDzp4ePCxt9PM8K2Vef9J8c0Lc5P/WrXfnF1wnx5+5k17+qn7bOkVe3q9Oes+YBp4YftI4NvIGyHkjCt+f/rba+7jw5uzC87+pEL24RsHVxfaT5Ofd0+PBeCl7ZLCH1z7yFvb7jPiH9Ud31udAX5mra6avFyds4EXt0sK76zZ804bvrviA3h3xdfX3nhyHXhxu6zw6rIewLdW7bd64VXJ1Pr+7NScut6PjY05upT2raIlfJX2lo6nKw8fU3/89OMWlqyeXKhLaSPuJ1RvQCfha0Jod8VfXUiIJ532jtlGhqpQvDwfbzLntPF0/UxY8VkaRCe0z49zqblkeLW+7XeeAt+bKgCfmqSxAJ+1AfBCFfDF5oAHHnjggQceeOCB1/UTeHFkwBs0AF6oAr7YHPDAAw888MADDzzwun4CL44MeIMGwAtVwBebAx544IEHHnjggQde10/gxZEBb9AAeKEK+GJzwAMPPPDAAw888MDr+gm8ODLgDRoAL1QBX2wOeOCBBx544IEHHnhdP4EXRwa8QQPghSrgi831CS8l/Q3wkmuMq3TtDqPMpK7PBtqKAY4N+Ax9AT4hAZ+vQenhSeVIwFc0AV/RBHxFU9Hw//1GrBFvidySdwrv5WUjR/HLvtGUpbcTeyV2Rx6CaRKOoOuyts8tTcNWrjkoGP7FHWnSdu98KU1b68ltqerxnY+Dqr9/9cW6OsrH4aZeWSTm469Uk0g7ryzat91fO9F2Xpk4Bi9aYnJ3T6zXT4LXi1hX7sT73PpTI9ZnryzSzmCuCobf/dUH+orW6i+FGnev6LPNOulFaK+WOj2+fPq4Z+7dsmjMf6vZj7ZzyyLtmn/+NNbOKxPH4EVLSt7uCUmaBK8X0S5729G+vGjEx+aWRdulz1Xh7/ECoor6WFourU/Eo4U637q9Hhu0VxaLqZlFx9sMtzv4+S9+Fp0cvyxhDMkLPthdTNIkyPDRvkjwkXYGc1X0ir/xiTD03Q/E5XIgr5PdG+8He33+1vv/uP/iNz1ntlcWibl743asnVcW7dvBp/+JtvPKxDGoaClv8gkj8fuhnwTVi3hXvMJoX140NA0bsXYGc8V39RVNwFc0AV/RBHxFE/AVTcBXNP0f79750w2ZJ94AAAAASUVORK5CYII=" alt width="100%" /></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">plot</span>(IRIS, <span class="at">type =</span> <span class="st">&quot;DENS&quot;</span>)   <span class="co"># smoothed densities</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="co">#&gt; Picking joint bandwidth of 0.0933</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co">#&gt; Picking joint bandwidth of 0.0405</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt; Picking joint bandwidth of 0.118</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co">#&gt; Picking joint bandwidth of 0.0739</span></span></code></pre></div>
+<p><img role="img" aria-label src="data:image/png;base64,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" alt width="100%" /></p>
+<p>All the plot methods return a <code>ggplot</code> object (invisibly),
+that can be modified with the functions of <strong>ggplot2</strong>:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">plot</span>(IRIS, <span class="at">type =</span> <span class="st">&quot;BOXPLOT&quot;</span>)</span></code></pre></div>
+<p><img role="img" aria-label src="data:image/png;base64,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" alt width="100%" /></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>p <span class="sc">+</span> ggplot2<span class="sc">::</span><span class="fu">ggtitle</span>(<span class="st">&quot;Iris data: boxplots of the histograms&quot;</span>)</span></code></pre></div>
+<p><img role="img" aria-label src="data:image/png;base64,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" alt width="100%" /></p>
+</div>
+</div>
+<div id="working-with-a-math" class="section level2">
+<h2>Working with a MatH</h2>
+<p>Rows and columns are extracted as for an ordinary matrix, and
+matrices with the same columns (rows) can be bound by rows
+(columns):</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">dim</span>(BLOOD<span class="sc">@</span>M)</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="co">#&gt; [1] 14  3</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>B <span class="ot">&lt;-</span> BLOOD[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="fu">c</span>(<span class="st">&quot;Cholesterol&quot;</span>, <span class="st">&quot;Hemoglobin&quot;</span>)]</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>B</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co">#&gt; a matrix of distributions </span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#&gt;  2  variables  4  rows </span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt;  each distibution in the cell is represented by the mean and the standard deviation </span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt;                  Cholesterol               Hemoglobin        </span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt; u1: F-20  [m= 150.1  ,s= 26.336 ]  [m= 13.695  ,s= 0.55031 ]</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co">#&gt; u2: F-30 [m= 150.71  ,s= 25.284 ]  [m= 12.158  ,s= 0.52834 ]</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co">#&gt; u3: F-40 [m= 164.96  ,s= 25.334 ]  [m= 12.134  ,s= 0.50739 ]</span></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="co">#&gt; u4: F-50 [m= 186.51  ,s= 26.655 ]  [m= 12.133  ,s= 0.58514 ]</span></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="fu">get.MatH.main.info</span>(B)</span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co">#&gt; $nrows</span></span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="co">#&gt; [1] 4</span></span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co">#&gt; $ncols</span></span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a><span class="co">#&gt; $rownames</span></span>
+<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a><span class="co">#&gt; [1] &quot;u1: F-20&quot; &quot;u2: F-30&quot; &quot;u3: F-40&quot; &quot;u4: F-50&quot;</span></span>
+<span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb15-23"><a href="#cb15-23" tabindex="-1"></a><span class="co">#&gt; $varnames</span></span>
+<span id="cb15-24"><a href="#cb15-24" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Cholesterol&quot; &quot;Hemoglobin&quot;</span></span>
+<span id="cb15-25"><a href="#cb15-25" tabindex="-1"></a></span>
+<span id="cb15-26"><a href="#cb15-26" tabindex="-1"></a><span class="fu">WH.bind.row</span>(BLOOD[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, ], BLOOD[<span class="dv">13</span><span class="sc">:</span><span class="dv">14</span>, ])</span>
+<span id="cb15-27"><a href="#cb15-27" tabindex="-1"></a><span class="co">#&gt; a matrix of distributions </span></span>
+<span id="cb15-28"><a href="#cb15-28" tabindex="-1"></a><span class="co">#&gt;  3  variables  4  rows </span></span>
+<span id="cb15-29"><a href="#cb15-29" tabindex="-1"></a><span class="co">#&gt;  each distibution in the cell is represented by the mean and the standard deviation </span></span>
+<span id="cb15-30"><a href="#cb15-30" tabindex="-1"></a><span class="co">#&gt;                  Cholesterol               Hemoglobin                Hematocrit        </span></span>
+<span id="cb15-31"><a href="#cb15-31" tabindex="-1"></a><span class="co">#&gt; u1: F-20  [m= 150.1  ,s= 26.336 ]  [m= 13.695  ,s= 0.55031 ] [m= 41.526  ,s= 2.1968 ] </span></span>
+<span id="cb15-32"><a href="#cb15-32" tabindex="-1"></a><span class="co">#&gt; u2: F-30 [m= 150.71  ,s= 25.284 ]  [m= 12.158  ,s= 0.52834 ] [m= 36.497  ,s= 2.1225 ] </span></span>
+<span id="cb15-33"><a href="#cb15-33" tabindex="-1"></a><span class="co">#&gt; u13: M-70 [m= 205.66  ,s= 22.499 ]  [m= 12.15  ,s= 0.33425 ]   [m= 35.75  ,s= 2.1651 ] </span></span>
+<span id="cb15-34"><a href="#cb15-34" tabindex="-1"></a><span class="co">#&gt; u14: M-80+ [m= 205.48  ,s= 23.537 ]   [m= 12.12  ,s= 0.6163 ]   [m= 38.45  ,s= 2.6158 ]</span></span></code></pre></div>
+<p>Single cells are read and written with <code>get.cell.MatH()</code>
+and <code>set.cell.MatH()</code> (or directly through the slot
+<code>M</code>):</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">get.cell.MatH</span>(BLOOD, <span class="at">r =</span> <span class="dv">1</span>, <span class="at">c =</span> <span class="dv">1</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="co">#&gt;               X             p</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="co">#&gt; Bin_1  [ 80 ; 100 )         0.025</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co">#&gt; Bin_2 [ 100 ; 120 )         0.075</span></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="co">#&gt; Bin_3 [ 120 ; 135 )         0.175</span></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="co">#&gt; Bin_4 [ 135 ; 150 )          0.25</span></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="co">#&gt; Bin_5 [ 150 ; 165 )           0.2</span></span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a><span class="co">#&gt; Bin_6 [ 165 ; 180 )         0.162</span></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="co">#&gt; Bin_7 [ 180 ; 200 )         0.088</span></span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="co">#&gt; Bin_8 [ 200 ; 240 ]         0.025</span></span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a><span class="co">#&gt;  mean =  150.1025   std  =  26.3356126518827 </span></span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a>B2 <span class="ot">&lt;-</span> <span class="fu">set.cell.MatH</span>(<span class="fu">distributionH</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">150</span>, <span class="dv">200</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">1</span>)), B, <span class="at">r =</span> <span class="dv">1</span>, <span class="at">c =</span> <span class="dv">1</span>)</span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a>B2<span class="sc">@</span>M[[<span class="dv">1</span>, <span class="dv">1</span>]]</span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a><span class="co">#&gt;               X             p</span></span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a><span class="co">#&gt; Bin_1 [ 100 ; 150 )           0.5</span></span>
+<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a><span class="co">#&gt; Bin_2 [ 150 ; 200 ]           0.5</span></span>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a><span class="co">#&gt;  mean =  150   std  =  28.8675134594813 </span></span>
+<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a><span class="co">#&gt; </span></span></code></pre></div>
+</div>
+<div id="registration" class="section level2">
+<h2>Registration</h2>
+<p>Two histograms with different bins can be expressed on the same cdf
+values without changing them (<em>registration</em>). This is the basis
+of all the fast computations of the package and is done automatically by
+the methods; it can also be done explicitly:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="fu">registerMH</span>(MyMAT)</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="fu">is.registeredMH</span>(MyMAT)</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="co">#&gt; [1] FALSE</span></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="fu">is.registeredMH</span>(R)</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>R<span class="sc">@</span>M[[<span class="dv">1</span>, <span class="dv">1</span>]]<span class="sc">@</span>p</span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a><span class="co">#&gt; [1] 0.00 0.12 0.20 0.30 0.40 0.50 0.70 0.75 1.00</span></span></code></pre></div>
+</div>
+<div id="histogram-time-series" class="section level2">
+<h2>Histogram time series</h2>
+<p>A histogram time series (<code>HTS</code>) is a sequence of
+histograms with a time reference; <code>RetHTS</code> is an example:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>RetHTS</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="co">#&gt;     Tstamp T_period_start T_period_end          mean        std         skew</span></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="co">#&gt; 1    38749          38749        38749 -0.0019860297 0.04224402  0.696353637</span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="co">#&gt; 2    38750          38750        38750 -0.0027525921 0.03422065  0.161710205</span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="co">#&gt; 3    38751          38751        38751 -0.0022545180 0.04252923  1.054658950</span></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="co">#&gt; 4    38754          38754        38754 -0.0056181618 0.03660866 -0.287735490</span></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co">#&gt; 5    38755          38755        38755 -0.0108187759 0.04469958 -0.691931506</span></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="co">#&gt; 6    38756          38756        38756 -0.0015679186 0.03932478  0.676302020</span></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="co">#&gt; 7    38757          38757        38757 -0.0038849961 0.03521140  0.474190871</span></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a><span class="co">#&gt; 8    38758          38758        38758 -0.0057090553 0.05180512 -0.108275213</span></span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a><span class="co">#&gt; 9    38761          38761        38761 -0.0048545204 0.03741751 -0.264327106</span></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a><span class="co">#&gt; 10   38762          38762        38762 -0.0060801071 0.04140493  0.276796508</span></span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a><span class="co">#&gt; 11   38763          38763        38763 -0.0018814832 0.05313136 -0.151476128</span></span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a><span class="co">#&gt; 12   38764          38764        38764 -0.0060526111 0.03971651 -0.041866347</span></span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a><span class="co">#&gt; 13   38765          38765        38765 -0.0019454181 0.05084949  0.354931260</span></span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a><span class="co">#&gt; 14   38768          38768        38768 -0.0051052438 0.02793509  0.009895520</span></span>
+<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a><span class="co">#&gt; 15   38769          38769        38769 -0.0034561197 0.02806190  0.028340867</span></span>
+<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a><span class="co">#&gt; 16   38770          38770        38770 -0.0069337719 0.03726113 -0.602640682</span></span>
+<span id="cb18-19"><a href="#cb18-19" tabindex="-1"></a><span class="co">#&gt; 17   38771          38771        38771 -0.0106445600 0.05501497 -0.995706447</span></span>
+<span id="cb18-20"><a href="#cb18-20" tabindex="-1"></a><span class="co">#&gt; 18   38772          38772        38772 -0.0073090483 0.05280985 -0.254510473</span></span>
+<span id="cb18-21"><a href="#cb18-21" tabindex="-1"></a><span class="co">#&gt; 19   38775          38775        38775 -0.0092402357 0.04994473 -2.456202932</span></span>
+<span id="cb18-22"><a href="#cb18-22" tabindex="-1"></a><span class="co">#&gt; 20   38776          38776        38776 -0.0070208812 0.03425427 -0.170867642</span></span>
+<span id="cb18-23"><a href="#cb18-23" tabindex="-1"></a><span class="co">#&gt; 21   38777          38777        38777 -0.0047212118 0.04867714  0.296046999</span></span>
+<span id="cb18-24"><a href="#cb18-24" tabindex="-1"></a><span class="co">#&gt; 22   38778          38778        38778 -0.0047038051 0.03674708  0.240445851</span></span>
+<span id="cb18-25"><a href="#cb18-25" tabindex="-1"></a><span class="co">#&gt; 23   38779          38779        38779 -0.0064233064 0.05259779 -1.269210426</span></span>
+<span id="cb18-26"><a href="#cb18-26" tabindex="-1"></a><span class="co">#&gt; 24   38782          38782        38782 -0.0011817858 0.04103728  0.718818282</span></span>
+<span id="cb18-27"><a href="#cb18-27" tabindex="-1"></a><span class="co">#&gt; 25   38783          38783        38783 -0.0047734896 0.03857179 -0.141197527</span></span>
+<span id="cb18-28"><a href="#cb18-28" tabindex="-1"></a><span class="co">#&gt; 26   38784          38784        38784 -0.0048606093 0.03369879 -0.515454518</span></span>
+<span id="cb18-29"><a href="#cb18-29" tabindex="-1"></a><span class="co">#&gt; 27   38785          38785        38785 -0.0047037812 0.05545347 -0.295411527</span></span>
+<span id="cb18-30"><a href="#cb18-30" tabindex="-1"></a><span class="co">#&gt; 28   38786          38786        38786 -0.0007272310 0.05204268  0.707027815</span></span>
+<span id="cb18-31"><a href="#cb18-31" tabindex="-1"></a><span class="co">#&gt; 29   38789          38789        38789 -0.0064363434 0.03191699 -0.078502518</span></span>
+<span id="cb18-32"><a href="#cb18-32" tabindex="-1"></a><span class="co">#&gt; 30   38790          38790        38790 -0.0105923052 0.04003190 -0.199008788</span></span>
+<span id="cb18-33"><a href="#cb18-33" tabindex="-1"></a><span class="co">#&gt; 31   38791          38791        38791 -0.0069511893 0.03898982 -0.086497721</span></span>
+<span id="cb18-34"><a href="#cb18-34" tabindex="-1"></a><span class="co">#&gt; 32   38792          38792        38792 -0.0074389851 0.04508932 -0.935993029</span></span>
+<span id="cb18-35"><a href="#cb18-35" tabindex="-1"></a><span class="co">#&gt; 33   38793          38793        38793 -0.0075729608 0.04550285  0.000219057</span></span>
+<span id="cb18-36"><a href="#cb18-36" tabindex="-1"></a><span class="co">#&gt; 34   38796          38796        38796 -0.0030633416 0.04627440  0.093724269</span></span>
+<span id="cb18-37"><a href="#cb18-37" tabindex="-1"></a><span class="co">#&gt; 35   38797          38797        38797 -0.0017307386 0.04216918  0.617796078</span></span>
+<span id="cb18-38"><a href="#cb18-38" tabindex="-1"></a><span class="co">#&gt; 36   38798          38798        38798 -0.0052264546 0.03984408  0.118317228</span></span>
+<span id="cb18-39"><a href="#cb18-39" tabindex="-1"></a><span class="co">#&gt; 37   38799          38799        38799 -0.0010626723 0.04243500  2.076246948</span></span>
+<span id="cb18-40"><a href="#cb18-40" tabindex="-1"></a><span class="co">#&gt; 38   38800          38800        38800 -0.0087817694 0.05320716 -2.306995986</span></span>
+<span id="cb18-41"><a href="#cb18-41" tabindex="-1"></a><span class="co">#&gt; 39   38803          38803        38803 -0.0072534963 0.04214570 -1.085068170</span></span>
+<span id="cb18-42"><a href="#cb18-42" tabindex="-1"></a><span class="co">#&gt; 40   38804          38804        38804 -0.0002786968 0.05085144  1.087733108</span></span>
+<span id="cb18-43"><a href="#cb18-43" tabindex="-1"></a><span class="co">#&gt; 41   38805          38805        38805 -0.0051219166 0.04418986 -0.011704014</span></span>
+<span id="cb18-44"><a href="#cb18-44" tabindex="-1"></a><span class="co">#&gt; 42   38806          38806        38806 -0.0076828832 0.05040461 -1.028022895</span></span>
+<span id="cb18-45"><a href="#cb18-45" tabindex="-1"></a><span class="co">#&gt; 43   38807          38807        38807 -0.0060545003 0.05235379 -0.606038718</span></span>
+<span id="cb18-46"><a href="#cb18-46" tabindex="-1"></a><span class="co">#&gt; 44   38810          38810        38810 -0.0061090452 0.05826492 -0.395657824</span></span>
+<span id="cb18-47"><a href="#cb18-47" tabindex="-1"></a><span class="co">#&gt; 45   38811          38811        38811 -0.0055985506 0.04355256 -0.486466779</span></span>
+<span id="cb18-48"><a href="#cb18-48" tabindex="-1"></a><span class="co">#&gt; 46   38812          38812        38812 -0.0046689580 0.04185633  0.459999525</span></span>
+<span id="cb18-49"><a href="#cb18-49" tabindex="-1"></a><span class="co">#&gt; 47   38813          38813        38813 -0.0029616471 0.03672018 -0.042695220</span></span>
+<span id="cb18-50"><a href="#cb18-50" tabindex="-1"></a><span class="co">#&gt; 48   38814          38814        38814 -0.0041635993 0.04382331  0.448764601</span></span>
+<span id="cb18-51"><a href="#cb18-51" tabindex="-1"></a><span class="co">#&gt; 49   38817          38817        38817 -0.0043612930 0.03274848  0.187488595</span></span>
+<span id="cb18-52"><a href="#cb18-52" tabindex="-1"></a><span class="co">#&gt; 50   38818          38818        38818 -0.0057142672 0.03244375 -0.246011044</span></span>
+<span id="cb18-53"><a href="#cb18-53" tabindex="-1"></a><span class="co">#&gt; 51   38819          38819        38819 -0.0036585120 0.03779608  0.122059841</span></span>
+<span id="cb18-54"><a href="#cb18-54" tabindex="-1"></a><span class="co">#&gt; 52   38820          38820        38820 -0.0049477194 0.02559904  0.261164825</span></span>
+<span id="cb18-55"><a href="#cb18-55" tabindex="-1"></a><span class="co">#&gt; 53   38821          38821        38821 -0.0045724760 0.01996054  0.563223610</span></span>
+<span id="cb18-56"><a href="#cb18-56" tabindex="-1"></a><span class="co">#&gt; 54   38824          38824        38824 -0.0091635871 0.04472303  0.237533944</span></span>
+<span id="cb18-57"><a href="#cb18-57" tabindex="-1"></a><span class="co">#&gt; 55   38825          38825        38825 -0.0081532739 0.04128826 -0.939945016</span></span>
+<span id="cb18-58"><a href="#cb18-58" tabindex="-1"></a><span class="co">#&gt; 56   38826          38826        38826 -0.0046166875 0.04686141  0.537764380</span></span>
+<span id="cb18-59"><a href="#cb18-59" tabindex="-1"></a><span class="co">#&gt; 57   38827          38827        38827 -0.0029616389 0.03641048 -0.028545536</span></span>
+<span id="cb18-60"><a href="#cb18-60" tabindex="-1"></a><span class="co">#&gt; 58   38828          38828        38828 -0.0089010695 0.04042375  0.713792677</span></span>
+<span id="cb18-61"><a href="#cb18-61" tabindex="-1"></a><span class="co">#&gt; 59   38831          38831        38831 -0.0101929316 0.05653616 -1.690331963</span></span>
+<span id="cb18-62"><a href="#cb18-62" tabindex="-1"></a><span class="co">#&gt; 60   38832          38832        38832 -0.0028571058 0.04468332  0.083454199</span></span>
+<span id="cb18-63"><a href="#cb18-63" tabindex="-1"></a><span class="co">#&gt; 61   38833          38833        38833 -0.0060278319 0.04528931 -0.440157943</span></span>
+<span id="cb18-64"><a href="#cb18-64" tabindex="-1"></a><span class="co">#&gt; 62   38834          38834        38834 -0.0093705645 0.06338602 -3.139906218</span></span>
+<span id="cb18-65"><a href="#cb18-65" tabindex="-1"></a><span class="co">#&gt; 63   38835          38835        38835 -0.0048908788 0.03923458 -0.850739442</span></span>
+<span id="cb18-66"><a href="#cb18-66" tabindex="-1"></a><span class="co">#&gt; 64   38838          38838        38838 -0.0075879791 0.05844668 -0.987439643</span></span>
+<span id="cb18-67"><a href="#cb18-67" tabindex="-1"></a><span class="co">#&gt; 65   38839          38839        38839 -0.0040766233 0.04768498 -0.616224072</span></span>
+<span id="cb18-68"><a href="#cb18-68" tabindex="-1"></a><span class="co">#&gt; 66   38840          38840        38840 -0.0047901832 0.03987908 -0.187875569</span></span>
+<span id="cb18-69"><a href="#cb18-69" tabindex="-1"></a><span class="co">#&gt; 67   38841          38841        38841 -0.0050174516 0.04519448 -0.363053027</span></span>
+<span id="cb18-70"><a href="#cb18-70" tabindex="-1"></a><span class="co">#&gt; 68   38842          38842        38842 -0.0100362910 0.06474940 -3.844042297</span></span>
+<span id="cb18-71"><a href="#cb18-71" tabindex="-1"></a><span class="co">#&gt; 69   38845          38845        38845 -0.0069999632 0.04992085 -0.780782148</span></span>
+<span id="cb18-72"><a href="#cb18-72" tabindex="-1"></a><span class="co">#&gt; 70   38846          38846        38846 -0.0075086792 0.04351507 -0.119390300</span></span>
+<span id="cb18-73"><a href="#cb18-73" tabindex="-1"></a><span class="co">#&gt; 71   38847          38847        38847 -0.0098083081 0.05765520 -0.452096610</span></span>
+<span id="cb18-74"><a href="#cb18-74" tabindex="-1"></a><span class="co">#&gt; 72   38848          38848        38848 -0.0054180625 0.06859318 -1.126436266</span></span>
+<span id="cb18-75"><a href="#cb18-75" tabindex="-1"></a><span class="co">#&gt; 73   38849          38849        38849 -0.0075272232 0.06127886  0.827625388</span></span>
+<span id="cb18-76"><a href="#cb18-76" tabindex="-1"></a><span class="co">#&gt; 74   38852          38852        38852 -0.0041985656 0.06142446  0.529495001</span></span>
+<span id="cb18-77"><a href="#cb18-77" tabindex="-1"></a><span class="co">#&gt; 75   38853          38853        38853 -0.0087804475 0.05342095 -0.070909200</span></span>
+<span id="cb18-78"><a href="#cb18-78" tabindex="-1"></a><span class="co">#&gt; 76   38854          38854        38854 -0.0054529214 0.06511938  0.008851600</span></span>
+<span id="cb18-79"><a href="#cb18-79" tabindex="-1"></a><span class="co">#&gt; 77   38855          38855        38855 -0.0081010001 0.05995930 -0.677938766</span></span>
+<span id="cb18-80"><a href="#cb18-80" tabindex="-1"></a><span class="co">#&gt; 78   38856          38856        38856  0.0004364151 0.06453323  0.156490593</span></span>
+<span id="cb18-81"><a href="#cb18-81" tabindex="-1"></a><span class="co">#&gt; 79   38859          38859        38859 -0.0039895079 0.05471918 -0.333312689</span></span>
+<span id="cb18-82"><a href="#cb18-82" tabindex="-1"></a><span class="co">#&gt; 80   38860          38860        38860 -0.0028146368 0.05766031  0.328591403</span></span>
+<span id="cb18-83"><a href="#cb18-83" tabindex="-1"></a><span class="co">#&gt; 81   38861          38861        38861 -0.0048257411 0.06988168  0.611671245</span></span>
+<span id="cb18-84"><a href="#cb18-84" tabindex="-1"></a><span class="co">#&gt; 82   38862          38862        38862 -0.0083797562 0.04348548 -0.346286093</span></span>
+<span id="cb18-85"><a href="#cb18-85" tabindex="-1"></a><span class="co">#&gt; 83   38863          38863        38863 -0.0021897476 0.04553626  0.064172498</span></span>
+<span id="cb18-86"><a href="#cb18-86" tabindex="-1"></a><span class="co">#&gt; 84   38866          38866        38866 -0.0051851697 0.02586819 -0.160231468</span></span>
+<span id="cb18-87"><a href="#cb18-87" tabindex="-1"></a><span class="co">#&gt; 85   38867          38867        38867 -0.0056097161 0.05844088  0.599221592</span></span>
+<span id="cb18-88"><a href="#cb18-88" tabindex="-1"></a><span class="co">#&gt; 86   38868          38868        38868 -0.0041637175 0.05226989 -1.287457703</span></span>
+<span id="cb18-89"><a href="#cb18-89" tabindex="-1"></a><span class="co">#&gt; 87   38869          38869        38869 -0.0031184325 0.04704296 -0.807542954</span></span>
+<span id="cb18-90"><a href="#cb18-90" tabindex="-1"></a><span class="co">#&gt; 88   38870          38870        38870 -0.0099453839 0.06255275 -4.200081947</span></span>
+<span id="cb18-91"><a href="#cb18-91" tabindex="-1"></a><span class="co">#&gt; 89   38873          38873        38873 -0.0027655402 0.03808986  1.089654951</span></span>
+<span id="cb18-92"><a href="#cb18-92" tabindex="-1"></a><span class="co">#&gt; 90   38874          38874        38874 -0.0005419267 0.04214455  0.897775010</span></span>
+<span id="cb18-93"><a href="#cb18-93" tabindex="-1"></a><span class="co">#&gt; 91   38875          38875        38875 -0.0033971822 0.03736942 -0.093831117</span></span>
+<span id="cb18-94"><a href="#cb18-94" tabindex="-1"></a><span class="co">#&gt; 92   38876          38876        38876 -0.0036933386 0.04352173  0.834360678</span></span>
+<span id="cb18-95"><a href="#cb18-95" tabindex="-1"></a><span class="co">#&gt; 93   38877          38877        38877 -0.0062726803 0.04113597  0.501480836</span></span>
+<span id="cb18-96"><a href="#cb18-96" tabindex="-1"></a><span class="co">#&gt; 94   38880          38880        38880 -0.0043090723 0.03271514 -0.149798527</span></span>
+<span id="cb18-97"><a href="#cb18-97" tabindex="-1"></a><span class="co">#&gt; 95   38881          38881        38881 -0.0002787105 0.04565224  1.053359064</span></span>
+<span id="cb18-98"><a href="#cb18-98" tabindex="-1"></a><span class="co">#&gt; 96   38882          38882        38882 -0.0059789644 0.04801573 -1.297302438</span></span>
+<span id="cb18-99"><a href="#cb18-99" tabindex="-1"></a><span class="co">#&gt; 97   38883          38883        38883 -0.0067595325 0.04059745 -0.074733516</span></span>
+<span id="cb18-100"><a href="#cb18-100" tabindex="-1"></a><span class="co">#&gt; 98   38884          38884        38884 -0.0035948660 0.03331588 -0.289386820</span></span>
+<span id="cb18-101"><a href="#cb18-101" tabindex="-1"></a><span class="co">#&gt; 99   38887          38887        38887 -0.0036701835 0.03245845  0.535800150</span></span>
+<span id="cb18-102"><a href="#cb18-102" tabindex="-1"></a><span class="co">#&gt; 100  38888          38888        38888 -0.0074911337 0.03855696 -0.354157836</span></span>
+<span id="cb18-103"><a href="#cb18-103" tabindex="-1"></a><span class="co">#&gt; 101  38889          38889        38889 -0.0052787230 0.03079112  0.191272381</span></span>
+<span id="cb18-104"><a href="#cb18-104" tabindex="-1"></a><span class="co">#&gt; 102  38890          38890        38890 -0.0007491067 0.03511747  0.840005560</span></span>
+<span id="cb18-105"><a href="#cb18-105" tabindex="-1"></a><span class="co">#&gt; 103  38891          38891        38891 -0.0049817761 0.04259499 -0.213627962</span></span>
+<span id="cb18-106"><a href="#cb18-106" tabindex="-1"></a><span class="co">#&gt; 104  38894          38894        38894 -0.0061031761 0.03335348  0.516790674</span></span>
+<span id="cb18-107"><a href="#cb18-107" tabindex="-1"></a><span class="co">#&gt; 105  38895          38895        38895 -0.0040592063 0.03850145  0.089547785</span></span>
+<span id="cb18-108"><a href="#cb18-108" tabindex="-1"></a><span class="co">#&gt; 106  38896          38896        38896 -0.0051567757 0.02822681 -0.303361576</span></span>
+<span id="cb18-109"><a href="#cb18-109" tabindex="-1"></a><span class="co">#&gt; 107  38897          38897        38897 -0.0105069555 0.04670969 -2.181569432</span></span>
+<span id="cb18-110"><a href="#cb18-110" tabindex="-1"></a><span class="co">#&gt; 108  38898          38898        38898 -0.0077189437 0.04557718 -0.555615542</span></span>
+<span id="cb18-111"><a href="#cb18-111" tabindex="-1"></a><span class="co">#&gt;          kurt</span></span>
+<span id="cb18-112"><a href="#cb18-112" tabindex="-1"></a><span class="co">#&gt; 1    6.433505</span></span>
+<span id="cb18-113"><a href="#cb18-113" tabindex="-1"></a><span class="co">#&gt; 2    3.860462</span></span>
+<span id="cb18-114"><a href="#cb18-114" tabindex="-1"></a><span class="co">#&gt; 3    6.334018</span></span>
+<span id="cb18-115"><a href="#cb18-115" tabindex="-1"></a><span class="co">#&gt; 4    4.077056</span></span>
+<span id="cb18-116"><a href="#cb18-116" tabindex="-1"></a><span class="co">#&gt; 5    5.949878</span></span>
+<span id="cb18-117"><a href="#cb18-117" tabindex="-1"></a><span class="co">#&gt; 6    4.805117</span></span>
+<span id="cb18-118"><a href="#cb18-118" tabindex="-1"></a><span class="co">#&gt; 7    4.194543</span></span>
+<span id="cb18-119"><a href="#cb18-119" tabindex="-1"></a><span class="co">#&gt; 8    4.937425</span></span>
+<span id="cb18-120"><a href="#cb18-120" tabindex="-1"></a><span class="co">#&gt; 9    4.290259</span></span>
+<span id="cb18-121"><a href="#cb18-121" tabindex="-1"></a><span class="co">#&gt; 10   6.148626</span></span>
+<span id="cb18-122"><a href="#cb18-122" tabindex="-1"></a><span class="co">#&gt; 11   9.303889</span></span>
+<span id="cb18-123"><a href="#cb18-123" tabindex="-1"></a><span class="co">#&gt; 12   4.189392</span></span>
+<span id="cb18-124"><a href="#cb18-124" tabindex="-1"></a><span class="co">#&gt; 13   6.160713</span></span>
+<span id="cb18-125"><a href="#cb18-125" tabindex="-1"></a><span class="co">#&gt; 14   5.072376</span></span>
+<span id="cb18-126"><a href="#cb18-126" tabindex="-1"></a><span class="co">#&gt; 15   4.330262</span></span>
+<span id="cb18-127"><a href="#cb18-127" tabindex="-1"></a><span class="co">#&gt; 16   5.229702</span></span>
+<span id="cb18-128"><a href="#cb18-128" tabindex="-1"></a><span class="co">#&gt; 17   6.528730</span></span>
+<span id="cb18-129"><a href="#cb18-129" tabindex="-1"></a><span class="co">#&gt; 18   7.056863</span></span>
+<span id="cb18-130"><a href="#cb18-130" tabindex="-1"></a><span class="co">#&gt; 19  16.218037</span></span>
+<span id="cb18-131"><a href="#cb18-131" tabindex="-1"></a><span class="co">#&gt; 20   3.533228</span></span>
+<span id="cb18-132"><a href="#cb18-132" tabindex="-1"></a><span class="co">#&gt; 21   5.833572</span></span>
+<span id="cb18-133"><a href="#cb18-133" tabindex="-1"></a><span class="co">#&gt; 22   6.362662</span></span>
+<span id="cb18-134"><a href="#cb18-134" tabindex="-1"></a><span class="co">#&gt; 23  11.922934</span></span>
+<span id="cb18-135"><a href="#cb18-135" tabindex="-1"></a><span class="co">#&gt; 24   5.971927</span></span>
+<span id="cb18-136"><a href="#cb18-136" tabindex="-1"></a><span class="co">#&gt; 25   5.804973</span></span>
+<span id="cb18-137"><a href="#cb18-137" tabindex="-1"></a><span class="co">#&gt; 26   3.729712</span></span>
+<span id="cb18-138"><a href="#cb18-138" tabindex="-1"></a><span class="co">#&gt; 27   8.626437</span></span>
+<span id="cb18-139"><a href="#cb18-139" tabindex="-1"></a><span class="co">#&gt; 28   8.276109</span></span>
+<span id="cb18-140"><a href="#cb18-140" tabindex="-1"></a><span class="co">#&gt; 29   3.762579</span></span>
+<span id="cb18-141"><a href="#cb18-141" tabindex="-1"></a><span class="co">#&gt; 30   3.885703</span></span>
+<span id="cb18-142"><a href="#cb18-142" tabindex="-1"></a><span class="co">#&gt; 31   5.293574</span></span>
+<span id="cb18-143"><a href="#cb18-143" tabindex="-1"></a><span class="co">#&gt; 32   7.833595</span></span>
+<span id="cb18-144"><a href="#cb18-144" tabindex="-1"></a><span class="co">#&gt; 33   4.890152</span></span>
+<span id="cb18-145"><a href="#cb18-145" tabindex="-1"></a><span class="co">#&gt; 34   5.230596</span></span>
+<span id="cb18-146"><a href="#cb18-146" tabindex="-1"></a><span class="co">#&gt; 35   5.686636</span></span>
+<span id="cb18-147"><a href="#cb18-147" tabindex="-1"></a><span class="co">#&gt; 36   5.678807</span></span>
+<span id="cb18-148"><a href="#cb18-148" tabindex="-1"></a><span class="co">#&gt; 37  15.385329</span></span>
+<span id="cb18-149"><a href="#cb18-149" tabindex="-1"></a><span class="co">#&gt; 38  13.792963</span></span>
+<span id="cb18-150"><a href="#cb18-150" tabindex="-1"></a><span class="co">#&gt; 39   4.974648</span></span>
+<span id="cb18-151"><a href="#cb18-151" tabindex="-1"></a><span class="co">#&gt; 40   8.830547</span></span>
+<span id="cb18-152"><a href="#cb18-152" tabindex="-1"></a><span class="co">#&gt; 41   6.374511</span></span>
+<span id="cb18-153"><a href="#cb18-153" tabindex="-1"></a><span class="co">#&gt; 42   9.496948</span></span>
+<span id="cb18-154"><a href="#cb18-154" tabindex="-1"></a><span class="co">#&gt; 43   8.880585</span></span>
+<span id="cb18-155"><a href="#cb18-155" tabindex="-1"></a><span class="co">#&gt; 44   6.925153</span></span>
+<span id="cb18-156"><a href="#cb18-156" tabindex="-1"></a><span class="co">#&gt; 45   6.884867</span></span>
+<span id="cb18-157"><a href="#cb18-157" tabindex="-1"></a><span class="co">#&gt; 46   5.036577</span></span>
+<span id="cb18-158"><a href="#cb18-158" tabindex="-1"></a><span class="co">#&gt; 47   4.208889</span></span>
+<span id="cb18-159"><a href="#cb18-159" tabindex="-1"></a><span class="co">#&gt; 48   7.897283</span></span>
+<span id="cb18-160"><a href="#cb18-160" tabindex="-1"></a><span class="co">#&gt; 49   4.668999</span></span>
+<span id="cb18-161"><a href="#cb18-161" tabindex="-1"></a><span class="co">#&gt; 50   3.562023</span></span>
+<span id="cb18-162"><a href="#cb18-162" tabindex="-1"></a><span class="co">#&gt; 51   5.802111</span></span>
+<span id="cb18-163"><a href="#cb18-163" tabindex="-1"></a><span class="co">#&gt; 52   4.069244</span></span>
+<span id="cb18-164"><a href="#cb18-164" tabindex="-1"></a><span class="co">#&gt; 53   5.127033</span></span>
+<span id="cb18-165"><a href="#cb18-165" tabindex="-1"></a><span class="co">#&gt; 54   9.820100</span></span>
+<span id="cb18-166"><a href="#cb18-166" tabindex="-1"></a><span class="co">#&gt; 55   7.934035</span></span>
+<span id="cb18-167"><a href="#cb18-167" tabindex="-1"></a><span class="co">#&gt; 56   5.537140</span></span>
+<span id="cb18-168"><a href="#cb18-168" tabindex="-1"></a><span class="co">#&gt; 57   6.009552</span></span>
+<span id="cb18-169"><a href="#cb18-169" tabindex="-1"></a><span class="co">#&gt; 58   6.595900</span></span>
+<span id="cb18-170"><a href="#cb18-170" tabindex="-1"></a><span class="co">#&gt; 59  11.243804</span></span>
+<span id="cb18-171"><a href="#cb18-171" tabindex="-1"></a><span class="co">#&gt; 60   5.849040</span></span>
+<span id="cb18-172"><a href="#cb18-172" tabindex="-1"></a><span class="co">#&gt; 61   6.474160</span></span>
+<span id="cb18-173"><a href="#cb18-173" tabindex="-1"></a><span class="co">#&gt; 62  21.884934</span></span>
+<span id="cb18-174"><a href="#cb18-174" tabindex="-1"></a><span class="co">#&gt; 63   5.869432</span></span>
+<span id="cb18-175"><a href="#cb18-175" tabindex="-1"></a><span class="co">#&gt; 64   9.724247</span></span>
+<span id="cb18-176"><a href="#cb18-176" tabindex="-1"></a><span class="co">#&gt; 65   4.198066</span></span>
+<span id="cb18-177"><a href="#cb18-177" tabindex="-1"></a><span class="co">#&gt; 66   4.626865</span></span>
+<span id="cb18-178"><a href="#cb18-178" tabindex="-1"></a><span class="co">#&gt; 67   3.945153</span></span>
+<span id="cb18-179"><a href="#cb18-179" tabindex="-1"></a><span class="co">#&gt; 68  30.346126</span></span>
+<span id="cb18-180"><a href="#cb18-180" tabindex="-1"></a><span class="co">#&gt; 69   5.403221</span></span>
+<span id="cb18-181"><a href="#cb18-181" tabindex="-1"></a><span class="co">#&gt; 70   4.367429</span></span>
+<span id="cb18-182"><a href="#cb18-182" tabindex="-1"></a><span class="co">#&gt; 71   7.850489</span></span>
+<span id="cb18-183"><a href="#cb18-183" tabindex="-1"></a><span class="co">#&gt; 72   8.279600</span></span>
+<span id="cb18-184"><a href="#cb18-184" tabindex="-1"></a><span class="co">#&gt; 73   6.821111</span></span>
+<span id="cb18-185"><a href="#cb18-185" tabindex="-1"></a><span class="co">#&gt; 74   4.612564</span></span>
+<span id="cb18-186"><a href="#cb18-186" tabindex="-1"></a><span class="co">#&gt; 75   6.192405</span></span>
+<span id="cb18-187"><a href="#cb18-187" tabindex="-1"></a><span class="co">#&gt; 76   5.422810</span></span>
+<span id="cb18-188"><a href="#cb18-188" tabindex="-1"></a><span class="co">#&gt; 77   6.368277</span></span>
+<span id="cb18-189"><a href="#cb18-189" tabindex="-1"></a><span class="co">#&gt; 78   6.391666</span></span>
+<span id="cb18-190"><a href="#cb18-190" tabindex="-1"></a><span class="co">#&gt; 79   4.294341</span></span>
+<span id="cb18-191"><a href="#cb18-191" tabindex="-1"></a><span class="co">#&gt; 80   5.971598</span></span>
+<span id="cb18-192"><a href="#cb18-192" tabindex="-1"></a><span class="co">#&gt; 81   4.677875</span></span>
+<span id="cb18-193"><a href="#cb18-193" tabindex="-1"></a><span class="co">#&gt; 82   5.958471</span></span>
+<span id="cb18-194"><a href="#cb18-194" tabindex="-1"></a><span class="co">#&gt; 83   5.382289</span></span>
+<span id="cb18-195"><a href="#cb18-195" tabindex="-1"></a><span class="co">#&gt; 84   4.313987</span></span>
+<span id="cb18-196"><a href="#cb18-196" tabindex="-1"></a><span class="co">#&gt; 85   5.366215</span></span>
+<span id="cb18-197"><a href="#cb18-197" tabindex="-1"></a><span class="co">#&gt; 86   9.113494</span></span>
+<span id="cb18-198"><a href="#cb18-198" tabindex="-1"></a><span class="co">#&gt; 87   6.421688</span></span>
+<span id="cb18-199"><a href="#cb18-199" tabindex="-1"></a><span class="co">#&gt; 88  33.147580</span></span>
+<span id="cb18-200"><a href="#cb18-200" tabindex="-1"></a><span class="co">#&gt; 89   7.042168</span></span>
+<span id="cb18-201"><a href="#cb18-201" tabindex="-1"></a><span class="co">#&gt; 90   6.642544</span></span>
+<span id="cb18-202"><a href="#cb18-202" tabindex="-1"></a><span class="co">#&gt; 91   5.687776</span></span>
+<span id="cb18-203"><a href="#cb18-203" tabindex="-1"></a><span class="co">#&gt; 92   8.806083</span></span>
+<span id="cb18-204"><a href="#cb18-204" tabindex="-1"></a><span class="co">#&gt; 93   7.990728</span></span>
+<span id="cb18-205"><a href="#cb18-205" tabindex="-1"></a><span class="co">#&gt; 94   3.469891</span></span>
+<span id="cb18-206"><a href="#cb18-206" tabindex="-1"></a><span class="co">#&gt; 95   7.260356</span></span>
+<span id="cb18-207"><a href="#cb18-207" tabindex="-1"></a><span class="co">#&gt; 96  14.176536</span></span>
+<span id="cb18-208"><a href="#cb18-208" tabindex="-1"></a><span class="co">#&gt; 97   9.526191</span></span>
+<span id="cb18-209"><a href="#cb18-209" tabindex="-1"></a><span class="co">#&gt; 98   4.557180</span></span>
+<span id="cb18-210"><a href="#cb18-210" tabindex="-1"></a><span class="co">#&gt; 99   6.465983</span></span>
+<span id="cb18-211"><a href="#cb18-211" tabindex="-1"></a><span class="co">#&gt; 100  6.562610</span></span>
+<span id="cb18-212"><a href="#cb18-212" tabindex="-1"></a><span class="co">#&gt; 101  4.722468</span></span>
+<span id="cb18-213"><a href="#cb18-213" tabindex="-1"></a><span class="co">#&gt; 102  5.816567</span></span>
+<span id="cb18-214"><a href="#cb18-214" tabindex="-1"></a><span class="co">#&gt; 103  7.646801</span></span>
+<span id="cb18-215"><a href="#cb18-215" tabindex="-1"></a><span class="co">#&gt; 104  5.481879</span></span>
+<span id="cb18-216"><a href="#cb18-216" tabindex="-1"></a><span class="co">#&gt; 105  4.773725</span></span>
+<span id="cb18-217"><a href="#cb18-217" tabindex="-1"></a><span class="co">#&gt; 106  4.315656</span></span>
+<span id="cb18-218"><a href="#cb18-218" tabindex="-1"></a><span class="co">#&gt; 107 12.221400</span></span>
+<span id="cb18-219"><a href="#cb18-219" tabindex="-1"></a><span class="co">#&gt; 108  6.150324</span></span>
+<span id="cb18-220"><a href="#cb18-220" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">subsetHTS</span>(RetHTS, <span class="at">from =</span> <span class="dv">1</span>, <span class="at">to =</span> <span class="dv">15</span>), <span class="at">type =</span> <span class="st">&quot;BOXPLOT&quot;</span>)</span></code></pre></div>
+<p><img role="img" aria-label src="data:image/png;base64,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" alt width="100%" /></p>
+<p>See the other vignettes for the statistics
+(<code>vignette(&quot;HistDAWass-02-basic-statistics&quot;)</code>), clustering,
+principal component analysis and regression of histogram data.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
